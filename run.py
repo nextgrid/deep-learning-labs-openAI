@@ -1,185 +1,154 @@
-import argparse
 import gym
-import numpy as np
-from itertools import count
-from collections import namedtuple
-
+import random
+import math
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 import torch.optim as optim
-from torch.distributions import Categorical
+from torch.autograd import Variable
+import torch.nn.functional as F
+import matplotlib.pyplot as plt
 
-# Cart Pole
+# hyper parameters
+EPS_START = 0.9  # e-greedy threshold start value
+EPS_END = 0.05  # e-greedy threshold end value
+EPS_DECAY = 200  # e-greedy threshold decay
+GAMMA = 0.8  # Q-learning discount factor
+LR = 0.001  # NN optimizer learning rate
+HIDDEN_LAYER = 128  # NN hidden layer size
+BATCH_SIZE = 32  # Q-learning batch size
 
-parser = argparse.ArgumentParser(description='PyTorch actor-critic example')
-parser.add_argument('--gamma', type=float, default=0.99, metavar='G',
-                    help='discount factor (default: 0.99)')
-parser.add_argument('--seed', type=int, default=543, metavar='N',
-                    help='random seed (default: 543)')
-parser.add_argument('--render', action='store_true',
-                    help='render the environment')
-parser.add_argument('--log-interval', type=int, default=10, metavar='N',
-                    help='interval between training status logs (default: 10)')
-args = parser.parse_args()
-
-
-env = gym.make('CartPole-v1')
-env.seed(args.seed)
-torch.manual_seed(args.seed)
+# %% DQN NETWORK ARCHITECTURE
 
 
-SavedAction = namedtuple('SavedAction', ['log_prob', 'value'])
-
-
-class Policy(nn.Module):
-    """
-    implements both actor and critic in one model
-    """
-
+class Network(nn.Module):
     def __init__(self):
-        super(Policy, self).__init__()
-        self.affine1 = nn.Linear(4, 128)
-
-        # actor's layer
-        self.action_head = nn.Linear(128, 2)
-
-        # critic's layer
-        self.value_head = nn.Linear(128, 1)
-
-        # action & reward buffer
-        self.saved_actions = []
-        self.rewards = []
+        nn.Module.__init__(self)
+        self.l1 = nn.Linear(4, HIDDEN_LAYER)
+        self.l2 = nn.Linear(HIDDEN_LAYER, 2)
 
     def forward(self, x):
-        """
-        forward of both actor and critic
-        """
-        x = F.relu(self.affine1(x))
-
-        # actor: choses action to take from state s_t
-        # by returning probability of each action
-        action_prob = F.softmax(self.action_head(x), dim=-1)
-
-        # critic: evaluates being in the state s_t
-        state_values = self.value_head(x)
-
-        # return values for both actor and critic as a tuple of 2 values:
-        # 1. a list with the probability of each action over the action space
-        # 2. the value from state s_t
-        return action_prob, state_values
+        x = F.relu(self.l1(x))
+        x = self.l2(x)
+        return x
 
 
-model = Policy()
-optimizer = optim.Adam(model.parameters(), lr=3e-2)
-eps = np.finfo(np.float32).eps.item()
+model = Network()
+optimizer = optim.Adam(model.parameters(), LR)
+
+# %% SELECT ACTION USING GREEDY ALGORITHM
+steps_done = 0
 
 
 def select_action(state):
-    state = torch.from_numpy(state).float()
-    probs, state_value = model(state)
+    global steps_done
+    sample = random.random()
+    eps_threshold = EPS_END + (EPS_START - EPS_END) * \
+        math.exp(-1. * steps_done / EPS_DECAY)
+    steps_done += 1
+    if sample > eps_threshold:
+        # return argmaxQ
+        return model(Variable(state, volatile=True).type(torch.FloatTensor)).data.max(1)[1].view(1, 1)
+    else:
+        # return random action
+        return torch.LongTensor([[random.randrange(2)]])
 
-    # create a categorical distribution over the list of probabilities of actions
-    m = Categorical(probs)
-
-    # and sample an action using the distribution
-    action = m.sample()
-
-    # save to action buffer
-    model.saved_actions.append(SavedAction(m.log_prob(action), state_value))
-
-    # the action to take (left or right)
-    return action.item()
+# %% MEMORY REPLAY
 
 
-def finish_episode():
-    """
-    Training code. Calculates actor and critic loss and performs backprop.
-    """
-    R = 0
-    saved_actions = model.saved_actions
-    policy_losses = []  # list to save actor (policy) loss
-    value_losses = []  # list to save critic (value) loss
-    returns = []  # list to save the true values
+class ReplayMemory:
+    def __init__(self, capacity):
+        self.capacity = capacity
+        self.memory = []
 
-    # calculate the true value using rewards returned from the environment
-    for r in model.rewards[::-1]:
-        # calculate the discounted value
-        R = r + args.gamma * R
-        returns.insert(0, R)
+    def push(self, transition):
+        self.memory.append(transition)
+        if len(self.memory) > self.capacity:
+            del self.memory[0]
 
-    returns = torch.tensor(returns)
-    returns = (returns - returns.mean()) / (returns.std() + eps)
+    def sample(self, batch_size):
+        return random.sample(self.memory, batch_size)
 
-    for (log_prob, value), R in zip(saved_actions, returns):
-        advantage = R - value.item()
+    def __len__(self):
+        return len(self.memory)
 
-        # calculate actor (policy) loss
-        policy_losses.append(-log_prob * advantage)
 
-        # calculate critic (value) loss using L1 smooth loss
-        value_losses.append(F.smooth_l1_loss(value, torch.tensor([R])))
+# %%
+memory = ReplayMemory(10000)
+episode_durations = []
 
-    # reset gradients
+
+def run_episode(e, environment):
+    state = environment.reset()
+    steps = 0
+    while True:
+        environment.render()
+        action = select_action(torch.FloatTensor([state]))
+        next_state, reward, done, _ = environment.step(action.numpy()[0, 0])
+
+        # negative reward when attempt ends
+        if done:
+            reward = -10
+
+        memory.push((torch.FloatTensor([state]),
+                     action,  # action is already a tensor
+                     torch.FloatTensor([next_state]),
+                     torch.FloatTensor([reward])))
+
+        learn()
+
+        state = next_state
+        steps += 1
+
+        if done:
+            #print("{2} Episode {0} finished after {1} steps".format(e, steps, '\033[92m' if steps >= 195 else '\033[99m'))
+            print("Episode {0} finished after {1} steps".format(e, steps))
+            episode_durations.append(steps)
+            break
+
+# %% TRAIN THE MODEL
+
+
+def learn():
+    if len(memory) < BATCH_SIZE:
+        return
+
+    # random transition batch is taken from experience replay memory
+    transitions = memory.sample(BATCH_SIZE)
+    batch_state, batch_action, batch_next_state, batch_reward = zip(
+        *transitions)
+
+    batch_state = Variable(torch.cat(batch_state))
+    batch_action = Variable(torch.cat(batch_action))
+    batch_reward = Variable(torch.cat(batch_reward))
+    batch_next_state = Variable(torch.cat(batch_next_state))
+
+    # current Q values are estimated by NN for all actions
+    current_q_values = model(batch_state).gather(1, batch_action)
+    # expected Q values are estimated from actions which gives maximum Q value
+    max_next_q_values = model(batch_next_state).detach().max(1)[0]
+    expected_q_values = batch_reward + (GAMMA * max_next_q_values)
+
+    # loss is measured from error between current and newly expected Q values
+    loss = F.smooth_l1_loss(current_q_values.reshape_as(
+        expected_q_values), expected_q_values)
+
+    # backpropagation of loss to NN
     optimizer.zero_grad()
-
-    # sum up all the values of policy_losses and value_losses
-    loss = torch.stack(policy_losses).sum() + torch.stack(value_losses).sum()
-
-    # perform backprop
     loss.backward()
     optimizer.step()
 
-    # reset rewards and action buffer
-    del model.rewards[:]
-    del model.saved_actions[:]
+# %% RUN AND SHOW THE RESULT
 
 
-def main():
-    running_reward = 10
+EPISODES = 100  # number of episodes
+# establish the environment
+env = gym.make('CartPole-v0')
 
-    # run inifinitely many episodes
-    for i_episode in count(1):
+for e in range(EPISODES):
+    run_episode(e, env)
 
-        # reset environment and episode reward
-        state = env.reset()
-        ep_reward = 0
+print('Complete')
+plt.plot(episode_durations)
+plt.show()
 
-        # for each episode, only run 9999 steps so that we don't
-        # infinite loop while learning
-        for t in range(1, 10000):
-
-            # select action from policy
-            action = select_action(state)
-
-            # take the action
-            state, reward, done, _ = env.step(action)
-
-            if args.render:
-                env.render()
-
-            model.rewards.append(reward)
-            ep_reward += reward
-            if done:
-                break
-
-        # update cumulative reward
-        running_reward = 0.05 * ep_reward + (1 - 0.05) * running_reward
-
-        # perform backprop
-        finish_episode()
-
-        # log results
-        if i_episode % args.log_interval == 0:
-            print('Episode {}\tLast reward: {:.2f}\tAverage reward: {:.2f}'.format(
-                  i_episode, ep_reward, running_reward))
-
-        # check if we have "solved" the cart pole problem
-        if running_reward > env.spec.reward_threshold:
-            print("Solved! Running reward is now {} and "
-                  "the last episode runs to {} time steps!".format(running_reward, t))
-            break
-
-
-if __name__ == '__main__':
-    main()
+# %%

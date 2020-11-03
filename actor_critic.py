@@ -17,7 +17,7 @@ import time
 parser = argparse.ArgumentParser(description='PyTorch actor-critic example')
 parser.add_argument('--gamma', type=float, default=0.99, metavar='G',
                     help='discount factor (default: 0.99)')
-parser.add_argument('--seed', type=int, default=283, metavar='N',
+parser.add_argument('--seed', type=int, default=543, metavar='N',
                     help='random seed (default: 543)')
 parser.add_argument('--render', action='store_true',
                     help='render the environment')
@@ -138,48 +138,36 @@ def finish_episode():
 
 
 def evaluate():
-
-    print('evaluation')
-
     evaluation_count = 0
-
     # run inifinitely many episodes
     for evaluation_count in count(1):
-
         # reset environment and episode reward
         state = env.reset()
         ep_reward = 0
-
         # for each episode, only run 9999 steps so that we don't
         # infinite loop while learning
-        for t in range(1, 50000):
-
+        for t in range(1, 9999):
             # select action from policy
             action = select_action(state)
-
             # take the action
             state, reward, done, _ = env.step(action)
-
             # model.rewards.append(reward)
             ep_reward += reward
             if done:
                 break
-
         # perform backprop
         if ep_reward < 195:
             print(line)
             print("{:.2f} count {} [FAILED]".format(
-                ep_reward, evaluation_count, t))
+                ep_reward, evaluation_count))
             print(line)
             time.sleep(0.1)
             return False
             break
-
         elif ep_reward > 194 and evaluation_count < 20:
-            print("{:.2f} count {} ".format(ep_reward, evaluation_count, t))
+            print("{:.2f} count {} ".format(ep_reward, evaluation_count))
             evaluation_count += 1
             time.sleep(0.1)
-
         else:
             print('evaluation succeded')
             return True
@@ -197,7 +185,7 @@ def main():
 
         # for each episode, only run 9999 steps so that we don't
         # infinite loop while learning
-        for t in range(1, 20000):
+        for t in range(1, 9999):
 
             # select action from policy
             action = select_action(state)
@@ -226,8 +214,8 @@ def main():
                   i_episode, ep_reward,))
 
         # check if we have "solved" the cart pole problem
-        if ep_reward > 194:
-            print("Solved! Episode reward {:.2f}".format(ep_reward, t))
+        if ep_reward > 100:
+            print("Solved! Episode reward {:.2f}".format(ep_reward))
 
             if evaluate():
                 print('Episode {}'.format(
