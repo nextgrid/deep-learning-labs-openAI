@@ -1,0 +1,5 @@
+{
+    "python.pythonPath": "/Users/mathiasasberg/miniconda3/envs/pytorch/bin/python",
+    "python.dataScience.jupyterServerURI": "local",
+    "python.linting.enabled": true
+}
