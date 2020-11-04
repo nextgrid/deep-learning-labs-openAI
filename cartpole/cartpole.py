@@ -12,26 +12,20 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torch.distributions import Categorical
 
-# Cart Pole
-
+# Parser
 parser = argparse.ArgumentParser(description='')
-parser.add_argument('--gamma', type=float, default=0.99,
-                    metavar='G', help='default: 0.99')
-parser.add_argument('--seed', type=int, default=523, metavar='N',
-                    help='default: 543')
-parser.add_argument('--render', action='store_true',
-                    help='render the environment')
-parser.add_argument('--log-interval', type=int, default=1, metavar='N',
-                    help='default: 10')
+parser.add_argument('--render', action='store_true',)
+parser.add_argument('--log-interval', type=int, default=1, metavar='N',)
 args = parser.parse_args()
 
+# Args ( )
 gamma = 0.9511969141631759
 learning_rate = 0.017200527912726204
 np_float = "float32"
 seed = 996
 nn_size = 64
 
-
+# Enviorment
 env = gym.make('CartPole-v1')
 env.seed(seed)
 torch.manual_seed(seed)
