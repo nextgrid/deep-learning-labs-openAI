@@ -8,6 +8,7 @@ Mission: Take top position in all OpenAI leaderboards. By [Deep Learning Labs](h
 
 We used Pytorch and DQN with Actor critic.  
 Optima was used to find the best hyper parameters
+watch [video](https://www.youtube.com/watch?v=a0oA5VmVFhQ&feature=youtu.be)
 
 ```
 gamma = 0.9511969141631759
@@ -150,10 +151,10 @@ Solved at Episode 0 With avg score of 204.2 over the following 100 Episodes
 [8.0, 29.0, 24.0, 14.0, 17.0, 76.0, 78.0, 27.0, 11.0, 26.0, 40.0, 33.0, 41.0, 54.0, 32.0, 43.0, 72.0, 38.0, 26.0, 93.0, 91.0, 89.0, 33.0, 63.0, 232.0, 38.0, 39.0, 47.0, 23.0, 30.0, 28.0, 42.0, 56.0, 46.0, 134.0, 105.0, 39.0, 135.0, 84.0, 28.0, 160.0, 104.0, 92.0, 259.0, 127.0, 45.0, 31.0, 54.0, 136.0, 96.0, 72.0, 147.0, 83.0, 78.0, 62.0, 90.0, 249.0, 108.0, 101.0, 91.0, 163.0, 67.0, 153.0, 78.0, 290.0, 155.0, 292.0, 372.0, 500.0, 500.0, 487.0, 248.0, 223.0, 312.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 500.0, 123.0, 498.0, 500.0, 110.0, 500.0, 500.0, 500.0, 500.0, 500.0]
 ```
 
-![dasd](https://storage.googleapis.com/nextgrid_github_repo_visuals/Github%20Graphics%20/small-banner.jpg)
+[![Deep Learning Labs AI ](https://storage.googleapis.com/nextgrid_github_repo_visuals/Github%20Graphics%20/small-banner.jpg)](https://nextgrid.ai/dll)
 
 ## Nextgrid AI Seed program
 
 Applications for [Nextgrid](https://nextgrid.ai) AI seed program is now open. We are looking for briliant business & people that are building AI-first solutions. Read more and apply at [AI seed program](https://nextgrid.ai/seed/)
 
-![dasd](https://storage.googleapis.com/nextgrid_github_repo_visuals/Github%20Graphics%20/partner-banner.jpg)
+[![Nextgrid Partners](https://storage.googleapis.com/nextgrid_github_repo_visuals/Github%20Graphics%20/partner-banner.jpg)](https://nextgrid.ai/partners/)
