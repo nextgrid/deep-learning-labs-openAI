@@ -8,7 +8,7 @@ Mission: Take top position in all OpenAI leaderboards. By [Deep Learning Labs](h
 
 We used Pytorch and DQN with Actor critic.  
 Optima was used to find the best hyper parameters  
-watch [video](https://www.youtube.com/watch?v=a0oA5VmVFhQ&feature=youtu.be)
+watch the [video](https://www.youtube.com/watch?v=a0oA5VmVFhQ&feature=youtu.be)
 
 ```
 gamma = 0.9511969141631759
@@ -30,10 +30,6 @@ Optima
 
 To run hyper parameter optimization run the file `optima.py`  
 To run training run `cartpole.py` to enable rendering add `--render` like `/path/cartpole.py --render`
-
-### Video
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/a0oA5VmVFhQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ### GIF Trained model
 
