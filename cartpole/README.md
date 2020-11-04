@@ -7,7 +7,7 @@ Mission: Take top position in all OpenAI leaderboards. By [Deep Learning Labs](h
 ## Solution
 
 We used Pytorch and DQN with Actor critic.  
-Optima was used to find the best hyper parameters
+Optima was used to find the best hyper parameters  
 watch [video](https://www.youtube.com/watch?v=a0oA5VmVFhQ&feature=youtu.be)
 
 ```
