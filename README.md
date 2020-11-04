@@ -2,6 +2,8 @@
 
 # OpenAI Leaderboard Takeover
 
+[![Slack Status](https://slack.deep-learning-labs.com/badge.svg)](https://yourdomain.com)
+
 Mission: Take top position in all OpenAI leaderboards. By [Deep Learning Labs](https://nextgrid.ai/deep-learning-labs/)
 
 - [x] CartPole [solution](https://github.com/nextgrid/deep-learning-labs-openAI/tree/main/cartpole)
