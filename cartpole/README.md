@@ -1,4 +1,4 @@
-![Nextgrid](https://storage.googleapis.com/nextgrid_github_repo_visuals/Github%20Graphics%20/big-banner.jpg)
+[![Nextgrid Artificial Intelligence](https://storage.googleapis.com/nextgrid_github_repo_visuals/Github%20Graphics%20/big-banner.jpg)](https://nextgrid.ai)
 
 # CartPole
 
@@ -29,6 +29,10 @@ Optima
 
 To run hyper parameter optimization run the file `optima.py`  
 To run training run `cartpole.py` to enable rendering add `--render` like `/path/cartpole.py --render`
+
+### Video
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/a0oA5VmVFhQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ### GIF Trained model
 
