@@ -1,10 +1,11 @@
 import argparse
-import gym
-import numpy as np
-from itertools import count
 from collections import namedtuple
-import matplotlib.pyplot as plt
+from itertools import count
 
+import gym
+import matplotlib.pyplot as plt
+import numpy as np
+import optuna
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -13,21 +14,27 @@ from torch.distributions import Categorical
 
 # Cart Pole
 
-parser = argparse.ArgumentParser(description='PyTorch actor-critic example')
-parser.add_argument('--gamma', type=float, default=0.98, metavar='G',
-                    help='discount factor (default: 0.99)')
+parser = argparse.ArgumentParser(description='')
+parser.add_argument('--gamma', type=float, default=0.99,
+                    metavar='G', help='default: 0.99')
 parser.add_argument('--seed', type=int, default=523, metavar='N',
-                    help='random seed (default: 543)')
+                    help='default: 543')
 parser.add_argument('--render', action='store_true',
                     help='render the environment')
 parser.add_argument('--log-interval', type=int, default=1, metavar='N',
-                    help='interval between training status logs (default: 10)')
+                    help='default: 10')
 args = parser.parse_args()
+
+gamma = 0.9511969141631759
+learning_rate = 0.017200527912726204
+np_float = "float32"
+seed = 996
+nn_size = 64
 
 
 env = gym.make('CartPole-v1')
-env.seed(args.seed)
-torch.manual_seed(args.seed)
+env.seed(seed)
+torch.manual_seed(seed)
 
 
 SavedAction = namedtuple('SavedAction', ['log_prob', 'value'])
@@ -40,13 +47,13 @@ class Policy(nn.Module):
 
     def __init__(self):
         super(Policy, self).__init__()
-        self.affine1 = nn.Linear(4, 128)
+        self.affine1 = nn.Linear(4, nn_size)
 
         # actor's layer
-        self.action_head = nn.Linear(128, 2)
+        self.action_head = nn.Linear(nn_size, 2)
 
         # critic's layer
-        self.value_head = nn.Linear(128, 1)
+        self.value_head = nn.Linear(nn_size, 1)
 
         # action & reward buffer
         self.saved_actions = []
@@ -72,8 +79,13 @@ class Policy(nn.Module):
 
 
 model = Policy()
-optimizer = optim.Adam(model.parameters(), lr=3e-2)
-eps = np.finfo(np.float16).eps.item()
+optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+if np_float == "float16":
+    eps = np.finfo(np.float16).eps.item()
+elif np_float == "float32":
+    eps = np.finfo(np.float32).eps.item()
+elif np_float == "float64":
+    eps = np.finfo(np.float64).eps.item()
 
 
 def select_action(state):
@@ -106,7 +118,7 @@ def finish_episode():
     # calculate the true value using rewards returned from the environment
     for r in model.rewards[::-1]:
         # calculate the discounted value
-        R = r + args.gamma * R
+        R = r + gamma * R
         returns.insert(0, R)
 
     returns = torch.tensor(returns)
@@ -192,6 +204,7 @@ def main():
             print(list_reward[-100:])
             plt.plot(list_reward)
             plt.show()
+            return 8
             break
         # check if we have "solved" the cart pole problem
         if running_reward > env.spec.reward_threshold:
