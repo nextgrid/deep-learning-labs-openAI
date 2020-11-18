@@ -2,9 +2,7 @@
 
 # OpenAI Leaderboard Takeover
 
-
-
-Mission: Take top position in all OpenAI leaderboards. By [Deep Learning Labs](https://nextgrid.ai/deep-learning-labs/). 
+Mission: Take top position in all [OpenAI leaderboards](https://github.com/openai/gym/wiki/Leaderboard). By [Deep Learning Labs](https://nextgrid.ai/deep-learning-labs/).
 
 - [x] CartPole [solution](https://github.com/nextgrid/deep-learning-labs-openAI/tree/main/cartpole)
 - [ ] MountainCar
