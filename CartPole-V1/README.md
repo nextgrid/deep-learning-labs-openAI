@@ -154,6 +154,6 @@ Solved at Episode 0 With avg score of 204.2 over the following 100 Episodes
 
 ## Nextgrid AI Seed program
 
-Applications for [Nextgrid](https://nextgrid.ai) AI seed program is now open. We are looking for briliant business & people that are building AI-first solutions. Read more and apply at [AI seed program](https://nextgrid.ai/seed/)
+Applications for [Nextgrid](https://nextgrid.ai) AI seed acceleration program are now open. We are looking for brilliant businesses & people that are building AI-first solutions. Read more and apply at [AI seed program](https://nextgrid.ai/seed/)
 
 [![Nextgrid Partners](https://storage.googleapis.com/nextgrid_github_repo_visuals/Github%20Graphics%20/partner-banner.jpg)](https://nextgrid.ai/partners/)
