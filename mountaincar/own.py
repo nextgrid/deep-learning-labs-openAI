@@ -32,6 +32,8 @@ torch.manual_seed(seed)
 
 
 SavedAction = namedtuple('SavedAction', ['log_prob', 'value'])
+Transition = namedtuple('Transition',
+                        ('state', 'action', 'next_state', 'reward'))
 
 
 class Policy(nn.Module):
@@ -83,7 +85,7 @@ elif np_float == "float64":
 
 
 def select_action(state):
-    state = torch.from_numpy(state).float()
+    state = torch.unsqueeze(torch.FloatTensor(state), 0)
     probs, state_value = model(state)
 
     # create a categorical distribution over the list of probabilities of actions
