@@ -177,7 +177,7 @@ storage = optuna.storages.RedisStorage(
 
 study = optuna.create_study(
     study_name=study_name, storage=storage, load_if_exists=True)
-study.optimize(objective, n_trials=5)
+study.optimize(objective, n_trials=20)
 print(study.best_params)
 print(study.best_params)
 print(optuna.study.StudySummary)
