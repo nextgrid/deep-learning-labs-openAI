@@ -219,10 +219,11 @@ def objective(trial):
 
 
 storage = optuna.storages.RedisStorage(
-    url='redis://127.0.0.1:6379/DB1',
+    url='redis://34.123.159.224:6379/DB1',
 )
 
 
-study = optuna.create_study(storage=storage)
+study = optuna.create_study(
+    study_name="cartpolwe", storage=storage, load_if_exists=True)
 study.optimize(objective, n_trials=20)
 print(study.best_params)

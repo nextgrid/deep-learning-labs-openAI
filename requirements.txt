@@ -1,0 +1,12 @@
+stable-baselines3[extra,tests,docs]>=0.10.0
+box2d-py==2.3.8
+pybullet
+redis
+gym-minigrid
+scikit-optimize
+optuna
+pyvirtualdisplay
+pytablewriter
+seaborn
+pyyaml>=5.1
+sb3-contrib>=0.10.0
