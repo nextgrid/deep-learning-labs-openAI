@@ -31,10 +31,10 @@ from stable_baselines3.common.callbacks import CallbackList, BaseCallback, Check
 
 # ======================================================================== Enviorment settings
 
-env_id = 'LunarLander-v2'
-timesteps = 25000
-reward_threshold = -180
-study_name = "lunarlanderNew"
+env_id = 'MountainCar-v0'
+timesteps = 500000
+reward_threshold = -110
+study_name = "MountainCar2"
 eval_env = gym.make(env_id)
 video_folder = './videos'
 video_length = 3000
@@ -56,9 +56,9 @@ def objective(trial):
     # print out observation space
     print('State shape: ', env.observation_space.shape)
 
-    # global model
+    global model
 
-    # obs = env.reset()
+    obs = env.reset()
 
     # ======================================================================== Optuna
 
@@ -69,8 +69,10 @@ def objective(trial):
         "batch_size", [16, 32, 64, 100, 128, 256, 512])
     buffer_size = trial.suggest_categorical(
         "buffer_size", [int(1e4), int(5e4), int(1e5), int(1e6)])
-#     exploration_final_eps = trial.suggest_uniform("exploration_final_eps", 0, 0.2)
-#     exploration_fraction = trial.suggest_uniform("exploration_fraction", 0, 0.5)
+    exploration_final_eps = trial.suggest_uniform(
+        "exploration_final_eps", 0, 0.2)
+    exploration_fraction = trial.suggest_uniform(
+        "exploration_fraction", 0, 0.5)
     target_update_interval = trial.suggest_categorical(
         "target_update_interval", [1, 1000, 5000, 10000, 15000, 20000])
     learning_starts = trial.suggest_categorical(
@@ -97,13 +99,13 @@ def objective(trial):
         train_freq=train_freq,
         gradient_steps=-1,  # gradient_steps,
         #         n_episodes_rollout=n_episodes_rollout,
-        exploration_fraction=0.12,  # exploration_fraction,
-        exploration_final_eps=0.1,  # exploration_final_eps,
+        exploration_fraction=exploration_fraction,
+        exploration_final_eps=exploration_final_eps,
         target_update_interval=target_update_interval,
         learning_starts=learning_starts,
         policy_kwargs=dict(net_arch=net_arch),
         #         tensorboard_log=logs_base_dir,
-        verbose=1
+        verbose=0
     )
 
     # ======================================================================== Evaluation
@@ -144,11 +146,12 @@ def objective(trial):
                     episodes = len(y)
                     print(episodes)
                     mean_reward = np.mean(y[-100:])
-                    print(mean_reward)
+                    mean_reward = round(mean_reward, 0)
                     if self.verbose > 0:
                         print(f"Num timesteps: {self.num_timesteps}")
-                        print(
-                            f"Best mean reward: {self.best_mean_reward:.2f} - Last mean reward per episode: {mean_reward:.2f}")
+                        print(f"Mean reward: {mean_reward:.2f} ")
+                        # print(
+                        #     f"Best mean reward: {self.best_mean_reward:.2f} - Last mean reward per episode: {mean_reward:.2f}")
 
                     # New best model, you could save the agent here
                     if mean_reward > reward_threshold:
@@ -179,6 +182,6 @@ storage = optuna.storages.RedisStorage(
 
 study = optuna.create_study(
     study_name=study_name, storage=storage, load_if_exists=True)
-study.optimize(objective, n_trials=20)
+study.optimize(objective, n_trials=30)
 print(study.best_params)
 print(study.best_params)

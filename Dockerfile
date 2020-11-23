@@ -28,5 +28,6 @@ ENV PATH=$VENV/bin:$PATH
 COPY . /tmp/
 # RUN chmod +x /tmp/entrypoint.sh
 # ENTRYPOINT ["/tmp/entrypoint.sh"]
-ENTRYPOINT python /tmp/lunarlander/lunarlander.py && /bin/bash
+# ENTRYPOINT python /tmp/lunarlander/lunarlander.py && /bin/bash
+ENTRYPOINT python /tmp/mountaincar/hptuning.py && /bin/bash
 
