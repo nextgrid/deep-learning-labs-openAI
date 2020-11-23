@@ -65,8 +65,10 @@ def objective(trial):
     gamma = trial.suggest_categorical(
         "gamma", [0.9, 0.95, 0.98, 0.99, 0.995, 0.999, 0.9999])
     learning_rate = trial.suggest_loguniform("lr", 4.3e-4, 7.3e-4)
-#     batch_size = trial.suggest_categorical("batch_size", [16, 32, 64, 100, 128, 256, 512])
-#     buffer_size = trial.suggest_categorical("buffer_size", [int(1e4), int(5e4), int(1e5), int(1e6)])
+    batch_size = trial.suggest_categorical(
+        "batch_size", [16, 32, 64, 100, 128, 256, 512])
+    buffer_size = trial.suggest_categorical(
+        "buffer_size", [int(1e4), int(5e4), int(1e5), int(1e6)])
 #     exploration_final_eps = trial.suggest_uniform("exploration_final_eps", 0, 0.2)
 #     exploration_fraction = trial.suggest_uniform("exploration_fraction", 0, 0.5)
     target_update_interval = trial.suggest_categorical(
@@ -90,8 +92,8 @@ def objective(trial):
         env,
         gamma=gamma,
         learning_rate=learning_rate,
-        batch_size=128,  # batch_size,
-        buffer_size=50000,  # buffer_size,
+        batch_size=batch_size,
+        buffer_size=buffer_size,
         train_freq=train_freq,
         gradient_steps=-1,  # gradient_steps,
         #         n_episodes_rollout=n_episodes_rollout,
@@ -177,6 +179,5 @@ storage = optuna.storages.RedisStorage(
 
 study = optuna.create_study(
     study_name=study_name, storage=storage, load_if_exists=True)
-study.optimize(objective, n_trials=20)
-print(study.best_params)
+study.optimize(objective, n_trials=50)
 print(study.best_params)

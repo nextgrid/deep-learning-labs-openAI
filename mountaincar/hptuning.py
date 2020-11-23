@@ -32,9 +32,9 @@ from stable_baselines3.common.callbacks import CallbackList, BaseCallback, Check
 # ======================================================================== Enviorment settings
 
 env_id = 'MountainCar-v0'
-timesteps = 500000
+timesteps = 700000
 reward_threshold = -110
-study_name = "MountainCar2"
+study_name = "MountainCar3"
 eval_env = gym.make(env_id)
 video_folder = './videos'
 video_length = 3000
@@ -54,7 +54,7 @@ def objective(trial):
     episodes = 0
 
     # print out observation space
-    print('State shape: ', env.observation_space.shape)
+    # print('State shape: ', env.observation_space.shape
 
     global model
 
