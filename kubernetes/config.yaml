@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: rl
+  name: rl
+  namespace: default
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: rl
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: rl
+    spec:
+      containers:
+        - image: gcr.io/nextgrid-254813/github.com/nextgrid/deep-learning-labs-openai
+          imagePullPolicy: IfNotPresent
+          name: deep-learning-labs-openai-sha256-1
+---
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: rl
+  name: rl-hpa-wt3z
+  namespace: default
+spec:
+  maxReplicas: 5
+  metrics:
+    - resource:
+        name: cpu
+        targetAverageUtilization: 80
+      type: Resource
+  minReplicas: 3
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: rl
