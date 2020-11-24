@@ -36,9 +36,9 @@ from stable_baselines3.common.callbacks import CallbackList, BaseCallback, Check
 # ======================================================================== Enviorment settings
 
 env_id = 'LunarLander-v2'
-timesteps = 700000
+timesteps = 50000
 reward_threshold = 200
-study_name = "lunarlanderPP0_200"
+study_name = "lunarlanderPP0_202"
 eval_env = gym.make(env_id)
 video_folder = './videos'
 video_length = 3000
@@ -53,11 +53,10 @@ def objective(trial):
     env = gym.make(env_id)
     os.makedirs(logs_base_dir, exist_ok=True)
     env = Monitor(env, log_dir)
+
     global episodes
     episodes = 0
 
-    # print out observation space
-    # print('State shape: ', env.observation_space.shape)
 
     batch_size = trial.suggest_categorical("batch_size", [8, 16, 32, 64, 128, 256, 512])
     n_steps = trial.suggest_categorical("n_steps", [8, 16, 32, 64, 128, 256, 512, 1024, 2048])
@@ -78,7 +77,6 @@ def objective(trial):
     ortho_init = False
     ortho_init = trial.suggest_categorical('ortho_init', [False, True])
     activation_fn = trial.suggest_categorical('activation_fn', ['tanh', 'relu', 'elu', 'leaky_relu'])
-
 
     net_arch = {
         "small": [dict(pi=[64, 64], vf=[64, 64])],
@@ -112,15 +110,12 @@ def objective(trial):
         verbose=0
     )
 
-
-
     # ======================================================================== Hyper Parameters
 
     # ======================================================================== Evaluation
 
-
     class RewardCallback(BaseCallback):
-        global episodes
+
         """
         Callback for saving a model (the check is done every ``check_freq`` steps)
         based on the training reward (in practice, we recommend using ``EvalCallback``).
@@ -154,13 +149,11 @@ def objective(trial):
                     global episodes
                     episodes = len(y)
                     print(episodes)
-                    mean_reward = np.mean(y[-100:])
+                    mean_reward = np.mean(y[-10:])
                     mean_reward = round(mean_reward, 0)
                     if self.verbose > 0:
                         print(f"Num timesteps: {self.num_timesteps}")
                         print(f"Mean reward: {mean_reward:.2f} ")
-                        # print(
-                        #     f"Best mean reward: {self.best_mean_reward:.2f} - Last mean reward per episode: {mean_reward:.2f}")
 
                     # New best model, you could save the agent here
                     if mean_reward > reward_threshold:
@@ -169,8 +162,7 @@ def objective(trial):
 
             return True
 
-
-# ======================================================================== Training
+    # ======================================================================== Training
 
     callback = RewardCallback(check_freq=5000, log_dir=log_dir)
     model.learn(total_timesteps=int(timesteps), callback=callback)
@@ -182,12 +174,18 @@ def objective(trial):
 
     return episodes
 
+
 storage = optuna.storages.RedisStorage(
     url='redis://34.123.159.224:6379/DB1',
 )
 
 study = optuna.create_study(study_name=study_name, storage=storage, load_if_exists=True)
-study.optimize(objective, n_trials=10)
-print(study.best_params)
+study.optimize(objective, n_trials=5)
+df = study.trials_dataframe(attrs=('number', 'value', 'params', 'state'))
+# print(df)
+# print(study.best_params)
+# print(study.best_value)  # Get best objective value.
+# print(study.best_trial)  # Get best trial's information.
+# print(study.trials)  # Get all trials' information.
 
 # direction='maximize'
