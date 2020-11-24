@@ -114,7 +114,7 @@ def objective(trial):
             ortho_init=ortho_init,
 
         ),
-        verbose=1
+        verbose=0
     )
 
 
