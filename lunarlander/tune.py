@@ -40,7 +40,7 @@ env_id = 'CartPole-v1'
 
 timesteps = 50000
 reward_threshold = 200
-study_name = "lunarlanderPPO_tuning_100TempTemp"
+study_name = "cartpole"
 eval_env = gym.make(env_id)
 video_folder = './videos'
 video_length = 3000
