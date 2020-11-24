@@ -63,7 +63,7 @@ def objective(trial):
 
     gamma = trial.suggest_categorical(
         "gamma", [0.9, 0.95, 0.98, 0.99, 0.995, 0.999, 0.9999])
-    learning_rate = trial.suggest_loguniform("lr", 4.3e-4, 7.3e-4)
+    learning_rate = trial.suggest_loguniform("lr", 4.3e-4, 7.3e-4) 0.0003
     batch_size = trial.suggest_categorical(
         "batch_size", [16, 32, 64, 100, 128, 256, 512])
     buffer_size = trial.suggest_categorical(

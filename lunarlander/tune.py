@@ -40,7 +40,7 @@ env_id = 'LunarLander-v2'
 
 timesteps = 500000
 reward_threshold = 200
-study_name = "luna"
+study_name = "superluna"
 eval_env = gym.make(env_id)
 video_folder = './videos'
 video_length = 3000
@@ -69,7 +69,7 @@ def objective(trial):
         "n_steps", [8, 16, 32, 64, 128, 256, 512, 1024, 2048])
     gamma = trial.suggest_categorical(
         "gamma", [0.9, 0.95, 0.98, 0.99, 0.995, 0.999, 0.9999])
-    learning_rate = trial.suggest_loguniform("lr", 1e-5, 1)
+    learning_rate = trial.suggest_loguniform("lr", 2e-4, 6e-4)
     lr_schedule = "constant"
 
     ent_coef = trial.suggest_loguniform("ent_coef", 0.00000001, 0.1)
