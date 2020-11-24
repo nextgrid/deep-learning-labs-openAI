@@ -36,9 +36,10 @@ from stable_baselines3.common.callbacks import CallbackList, BaseCallback, Check
 # ======================================================================== Enviorment settings
 
 env_id = 'LunarLander-v2'
-timesteps = 50000
+
+timesteps = 400000
 reward_threshold = 200
-study_name = "lunarlanderPP0_202"
+study_name = "lunarlanderPP0_205"
 eval_env = gym.make(env_id)
 video_folder = './videos'
 video_length = 3000
@@ -51,24 +52,32 @@ def objective(trial):
     # gym environment & variables
 
     env = gym.make(env_id)
+    # Parallel environments
+    # env = make_vec_env(gym.make(env_id), n_envs=4)
     os.makedirs(logs_base_dir, exist_ok=True)
     env = Monitor(env, log_dir)
 
     global episodes
+    global mean_reward
     episodes = 0
+    mean_reward = 0
 
-
-    batch_size = trial.suggest_categorical("batch_size", [8, 16, 32, 64, 128, 256, 512])
-    n_steps = trial.suggest_categorical("n_steps", [8, 16, 32, 64, 128, 256, 512, 1024, 2048])
-    gamma = trial.suggest_categorical("gamma", [0.9, 0.95, 0.98, 0.99, 0.995, 0.999, 0.9999])
+    batch_size = trial.suggest_categorical(
+        "batch_size", [8, 16, 32, 64, 128, 256, 512])
+    n_steps = trial.suggest_categorical(
+        "n_steps", [8, 16, 32, 64, 128, 256, 512, 1024, 2048])
+    gamma = trial.suggest_categorical(
+        "gamma", [0.9, 0.95, 0.98, 0.99, 0.995, 0.999, 0.9999])
     learning_rate = trial.suggest_loguniform("lr", 1e-5, 1)
     lr_schedule = "constant"
 
     ent_coef = trial.suggest_loguniform("ent_coef", 0.00000001, 0.1)
     clip_range = trial.suggest_categorical("clip_range", [0.1, 0.2, 0.3, 0.4])
     n_epochs = trial.suggest_categorical("n_epochs", [1, 5, 10, 20])
-    gae_lambda = trial.suggest_categorical("gae_lambda", [0.8, 0.9, 0.92, 0.95, 0.98, 0.99, 1.0])
-    max_grad_norm = trial.suggest_categorical("max_grad_norm", [0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2, 5])
+    gae_lambda = trial.suggest_categorical(
+        "gae_lambda", [0.8, 0.9, 0.92, 0.95, 0.98, 0.99, 1.0])
+    max_grad_norm = trial.suggest_categorical(
+        "max_grad_norm", [0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2, 5])
     vf_coef = trial.suggest_uniform("vf_coef", 0, 1)
     net_arch = trial.suggest_categorical("net_arch", ["small", "medium"])
     log_std_init = trial.suggest_uniform("log_std_init", -4, 1)
@@ -76,7 +85,8 @@ def objective(trial):
         "sde_sample_freq", [-1, 8, 16, 32, 64, 128, 256])
     ortho_init = False
     ortho_init = trial.suggest_categorical('ortho_init', [False, True])
-    activation_fn = trial.suggest_categorical('activation_fn', ['tanh', 'relu', 'elu', 'leaky_relu'])
+    activation_fn = trial.suggest_categorical(
+        'activation_fn', ['tanh', 'relu', 'elu', 'leaky_relu'])
 
     net_arch = {
         "small": [dict(pi=[64, 64], vf=[64, 64])],
@@ -119,7 +129,7 @@ def objective(trial):
         """
         Callback for saving a model (the check is done every ``check_freq`` steps)
         based on the training reward (in practice, we recommend using ``EvalCallback``).
-    
+
         :param check_freq: (int)
         :param log_dir: (str) Path to the folder where the model will be saved.
         It must contains the file created by the ``Monitor`` wrapper.
@@ -144,21 +154,25 @@ def objective(trial):
                 # Retrieve training reward
                 x, y = ts2xy(load_results(self.log_dir), 'timesteps')
                 if len(x) > 0:
-                    # Mean training reward over the last 100 episodes
-                    # print(y)
                     global episodes
+                    global mean_reward
                     episodes = len(y)
-                    print(episodes)
+                    # print(episodes)
                     mean_reward = np.mean(y[-10:])
                     mean_reward = round(mean_reward, 0)
                     if self.verbose > 0:
-                        print(f"Num timesteps: {self.num_timesteps}")
+                        print(f"Episodes: {episodes}")
+                        print(f"Num steps: {self.num_timesteps}")
                         print(f"Mean reward: {mean_reward:.2f} ")
+                        # Report intermediate objective value to Optima and Handle pruning
+                        trial.report(mean_reward, self.num_timesteps)
+                        if trial.should_prune():
+                            raise optuna.TrialPruned()
 
                     # New best model, you could save the agent here
-                    if mean_reward > reward_threshold:
-                        print("REWARD ACHIVED")
-                        return False
+                    # if mean_reward > reward_threshold:
+                    #     print("REWARD ACHIVED")
+                    #     return False
 
             return True
 
@@ -172,20 +186,20 @@ def objective(trial):
     del model
     env.reset()
 
-    return episodes
+    return mean_reward
 
 
-storage = optuna.storages.RedisStorage(
-    url='redis://34.123.159.224:6379/DB1',
-)
+# storage = optuna.storages.RedisStorage(
+#     url='redis://34.123.159.224:6379/DB1',
+# )
+storage = 'mysql://root:@34.122.181.208/rl'
 
-study = optuna.create_study(study_name=study_name, storage=storage, load_if_exists=True)
-study.optimize(objective, n_trials=5)
+study = optuna.create_study(study_name=study_name, storage=storage,
+                            pruner=optuna.pruners.MedianPruner(), load_if_exists=True, direction='maximize')
+study.optimize(objective, n_trials=10, n_jobs=-1)
 df = study.trials_dataframe(attrs=('number', 'value', 'params', 'state'))
 # print(df)
 # print(study.best_params)
 # print(study.best_value)  # Get best objective value.
 # print(study.best_trial)  # Get best trial's information.
 # print(study.trials)  # Get all trials' information.
-
-# direction='maximize'

@@ -6,6 +6,7 @@ RUN apt-get -y update \
     ffmpeg \
     freeglut3-dev \
     swig \
+    libmysqlclient-dev \
     xvfb \
     libxrandr2 \
     && apt-get clean \

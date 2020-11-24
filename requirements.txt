@@ -10,4 +10,5 @@ pytablewriter
 seaborn
 pyyaml>=5.1
 sb3-contrib>=0.10.0
+mysqlclient
 

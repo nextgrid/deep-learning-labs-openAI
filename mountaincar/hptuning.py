@@ -7,7 +7,6 @@ import pyvirtualdisplay
 import os
 import optuna
 
-
 # Video
 from pathlib import Path
 from IPython import display as ipythondisplay
@@ -27,7 +26,8 @@ from stable_baselines3.common.results_plotter import load_results, ts2xy, plot_r
 from stable_baselines3.common.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise
 from stable_baselines3.common.vec_env import VecVideoRecorder, SubprocVecEnv, DummyVecEnv
 from stable_baselines3.common.evaluation import evaluate_policy
-from stable_baselines3.common.callbacks import CallbackList, BaseCallback, CheckpointCallback, EveryNTimesteps, EvalCallback, StopTrainingOnRewardThreshold, StopTrainingOnMaxEpisodes
+from stable_baselines3.common.callbacks import CallbackList, BaseCallback, CheckpointCallback, EveryNTimesteps, \
+    EvalCallback, StopTrainingOnRewardThreshold, StopTrainingOnMaxEpisodes
 
 # ======================================================================== Enviorment settings
 
@@ -44,7 +44,6 @@ log_dir = "./log"
 
 # ======================================================================== Optuna Loop
 def objective(trial):
-
     # gym enviorment & variables
 
     env = gym.make(env_id)
@@ -79,9 +78,9 @@ def objective(trial):
         "learning_starts", [0, 1000, 5000, 10000])
     train_freq = trial.suggest_categorical(
         "train_freq", [1, 4, 8, 16, 128, 256, 1000])
-#     subsample_steps = trial.suggest_categorical("subsample_steps", [1, 2, 4, 8])
-#     gradient_steps = max(train_freq // subsample_steps, 1)
-#     n_episodes_rollout = -1
+    #     subsample_steps = trial.suggest_categorical("subsample_steps", [1, 2, 4, 8])
+    #     gradient_steps = max(train_freq // subsample_steps, 1)
+    #     n_episodes_rollout = -1
     net_arch = trial.suggest_categorical(
         "net_arch", ["tiny", "small", "medium"])
     net_arch = {"tiny": [64], "small": [
@@ -175,13 +174,13 @@ def objective(trial):
     return episodes
 
 
-storage = optuna.storages.RedisStorage(
-    url='redis://34.123.159.224:6379/DB1',
-)
-
+# storage = optuna.storages.RedisStorage(
+#     url='redis://34.123.159.224:6379/DB1',
+# )
+storage = 'mysql://root:@34.122.181.208/rl'
 
 study = optuna.create_study(
     study_name=study_name, storage=storage, load_if_exists=True)
-study.optimize(objective, n_trials=30)
+study.optimize(objective, n_trials=10, n_jobs=2)
 print(study.best_params)
 print(study.best_params)
