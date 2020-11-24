@@ -35,11 +35,12 @@ from stable_baselines3.common.callbacks import CallbackList, BaseCallback, Check
 
 # ======================================================================== Enviorment settings
 
-env_id = 'LunarLander-v2'
+# env_id = 'LunarLander-v2'
+env_id = 'CartPole-v1'
 
-timesteps = 400000
+timesteps = 50000
 reward_threshold = 200
-study_name = "lunarlanderPP0_205"
+study_name = "lunarlanderPPO_tuning_100TempTemp"
 eval_env = gym.make(env_id)
 video_folder = './videos'
 video_length = 3000
@@ -158,16 +159,17 @@ def objective(trial):
                     global mean_reward
                     episodes = len(y)
                     # print(episodes)
-                    mean_reward = np.mean(y[-10:])
+                    mean_reward = np.mean(y[-50:])
                     mean_reward = round(mean_reward, 0)
                     if self.verbose > 0:
                         print(f"Episodes: {episodes}")
                         print(f"Num steps: {self.num_timesteps}")
                         print(f"Mean reward: {mean_reward:.2f} ")
-                        # Report intermediate objective value to Optima and Handle pruning
-                        trial.report(mean_reward, episodes)
-                        if trial.should_prune():
-                            raise optuna.TrialPruned()
+                        print("=========== NEXTGRID.AI ================")
+                    # Report intermediate objective value to Optima and Handle pruning
+                    trial.report(mean_reward, episodes)
+                    if trial.should_prune():
+                        raise optuna.TrialPruned()
 
                     # New best model, you could save the agent here
                     # if mean_reward > reward_threshold:
@@ -196,10 +198,11 @@ storage = 'mysql://root:@34.122.181.208/rl'
 
 study = optuna.create_study(study_name=study_name, storage=storage,
                             pruner=optuna.pruners.MedianPruner(), load_if_exists=True, direction='maximize')
-study.optimize(objective, n_trials=10, n_jobs=-1)
-df = study.trials_dataframe(attrs=('number', 'value', 'params', 'state'))
+study.optimize(objective, n_trials=10, n_jobs=1)
+# df = study.trials_dataframe(attrs=('number', 'value', 'params', 'state'))
 # print(df)
-# print(study.best_params)
+print(study.best_params)
 # print(study.best_value)  # Get best objective value.
 # print(study.best_trial)  # Get best trial's information.
 # print(study.trials)  # Get all trials' information.
+# len(study.trials) # Get number of trails.
