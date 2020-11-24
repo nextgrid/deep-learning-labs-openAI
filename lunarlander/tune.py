@@ -38,7 +38,7 @@ from stable_baselines3.common.callbacks import CallbackList, BaseCallback, Check
 env_id = 'LunarLander-v2'
 timesteps = 700000
 reward_threshold = 200
-study_name = "lunarlanderPP0_100"
+study_name = "lunarlanderPP0_200"
 eval_env = gym.make(env_id)
 video_folder = './videos'
 video_length = 3000
@@ -78,12 +78,7 @@ def objective(trial):
     ortho_init = False
     ortho_init = trial.suggest_categorical('ortho_init', [False, True])
     activation_fn = trial.suggest_categorical('activation_fn', ['tanh', 'relu', 'elu', 'leaky_relu'])
-    # activation_fn = trial.suggest_categorical(
-    #     "activation_fn", ["tanh", "relu"])
 
-    #     # TODO: account when using multiple envs
-    # if batch_size > n_steps:
-    #     batch_size = n_steps
 
     net_arch = {
         "small": [dict(pi=[64, 64], vf=[64, 64])],
@@ -118,38 +113,6 @@ def objective(trial):
     )
 
 
-    #       n_envs: 16
-    #   n_timesteps: !!float 1e6
-    #   policy: 'MlpPolicy'
-    #   n_steps: 1024
-    #   batch_size: 64
-    #   gae_lambda: 0.98
-    #   gamma: 0.999
-    #   n_epochs: 4
-    #   ent_coef: 0.01
-
-    #     gamma = trial.suggest_categorical(
-    #         "gamma", [0.9, 0.95, 0.98, 0.99, 0.995, 0.999, 0.9999])
-    #     learning_rate = trial.suggest_loguniform("lr", 4.3e-4, 7.3e-4)
-    #     batch_size = trial.suggest_categorical(
-    #         "batch_size", [16, 32, 64, 100, 128, 256, 512])
-    #     buffer_size = trial.suggest_categorical(
-    #         "buffer_size", [int(1e4), int(5e4), int(1e5), int(1e6)])
-    # #     exploration_final_eps = trial.suggest_uniform("exploration_final_eps", 0, 0.2)
-    # #     exploration_fraction = trial.suggest_uniform("exploration_fraction", 0, 0.5)
-    #     target_update_interval = trial.suggest_categorical(
-    #         "target_update_interval", [1, 1000, 5000, 10000, 15000, 20000])
-    #     learning_starts = trial.suggest_categorical(
-    #         "learning_starts", [0, 1000, 5000, 10000])
-    #     train_freq = trial.suggest_categorical(
-    #         "train_freq", [1, 4, 8, 16, 128, 256, 1000])
-    # #     subsample_steps = trial.suggest_categorical("subsample_steps", [1, 2, 4, 8])
-    # #     gradient_steps = max(train_freq // subsample_steps, 1)
-    # #     n_episodes_rollout = -1
-    #     net_arch = trial.suggest_categorical(
-    #         "net_arch", ["tiny", "small", "medium"])
-    #     net_arch = {"tiny": [64], "small": [
-    #         64, 64], "medium": [256, 256]}[net_arch]
 
     # ======================================================================== Hyper Parameters
 
@@ -223,8 +186,7 @@ storage = optuna.storages.RedisStorage(
     url='redis://34.123.159.224:6379/DB1',
 )
 
-study = optuna.create_study(
-    study_name=study_name, storage=storage, load_if_exists=True)
+study = optuna.create_study(study_name=study_name, storage=storage, load_if_exists=True)
 study.optimize(objective, n_trials=10)
 print(study.best_params)
 
