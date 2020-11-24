@@ -165,7 +165,7 @@ def objective(trial):
                         print(f"Num steps: {self.num_timesteps}")
                         print(f"Mean reward: {mean_reward:.2f} ")
                         # Report intermediate objective value to Optima and Handle pruning
-                        trial.report(mean_reward, self.num_timesteps)
+                        trial.report(mean_reward, episodes)
                         if trial.should_prune():
                             raise optuna.TrialPruned()
 
