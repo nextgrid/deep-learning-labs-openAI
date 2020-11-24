@@ -35,12 +35,12 @@ from stable_baselines3.common.callbacks import CallbackList, BaseCallback, Check
 
 # ======================================================================== Enviorment settings
 
-# env_id = 'LunarLander-v2'
-env_id = 'CartPole-v1'
+env_id = 'LunarLander-v2'
+# env_id = 'CartPole-v1'
 
-timesteps = 50000
+timesteps = 500000
 reward_threshold = 200
-study_name = "cartpole"
+study_name = "lunar"
 eval_env = gym.make(env_id)
 video_folder = './videos'
 video_length = 3000
@@ -172,15 +172,15 @@ def objective(trial):
                         raise optuna.TrialPruned()
 
                     # New best model, you could save the agent here
-                    # if mean_reward > reward_threshold:
-                    #     print("REWARD ACHIVED")
-                    #     return False
+                    if mean_reward > reward_threshold:
+                        print("REWARD ACHIVED")
+                        return False
 
             return True
 
     # ======================================================================== Training
 
-    callback = RewardCallback(check_freq=5000, log_dir=log_dir)
+    callback = RewardCallback(check_freq=10000, log_dir=log_dir)
     model.learn(total_timesteps=int(timesteps), callback=callback)
     print(episodes)
 
@@ -188,7 +188,7 @@ def objective(trial):
     del model
     env.reset()
 
-    return mean_reward
+    return episodes
 
 
 # storage = optuna.storages.RedisStorage(
@@ -198,7 +198,7 @@ storage = 'mysql://root:@34.122.181.208/rl'
 
 study = optuna.create_study(study_name=study_name, storage=storage,
                             pruner=optuna.pruners.MedianPruner(), load_if_exists=True, direction='maximize')
-study.optimize(objective, n_trials=10, n_jobs=1)
+study.optimize(objective, n_trials=5, n_jobs=1)
 # df = study.trials_dataframe(attrs=('number', 'value', 'params', 'state'))
 # print(df)
 print(study.best_params)
