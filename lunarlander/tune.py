@@ -40,8 +40,8 @@ env_id = 'LunarLander-v2'
 
 timesteps = 2000000
 reward_threshold = 200
-episodes_threshold = 1200
-study_name = "superlunarv2"
+episodes_threshold = 1500
+study_name = "superlunarv3"
 eval_env = gym.make(env_id)
 video_folder = './videos'
 video_length = 3000
@@ -195,7 +195,7 @@ def objective(trial):
     del model
     env.reset()
 
-    return mean_reward
+    return episodes
 
 
 # storage = optuna.storages.RedisStorage(
@@ -203,11 +203,11 @@ def objective(trial):
 # )
 storage = 'mysql://root:@34.122.181.208/rl'
 
-study = optuna.create_study(study_name=study_name, storage=storage, direction='maximize',
+study = optuna.create_study(study_name=study_name, storage=storage,
                             pruner=optuna.pruners.MedianPruner(), load_if_exists=True)
 study.optimize(objective, n_trials=2, n_jobs=1)
 # df = study.trials_dataframe(attrs=('number', 'value', 'params', 'state'))
-# print(df) ,
+# print(df) , direction='maximize'
 print(study.best_params)
 # print(study.best_value)  # Get best objective value.
 # print(study.best_trial)  # Get best trial's information.
