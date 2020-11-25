@@ -19,11 +19,36 @@ Optima was used to find the best hyper parameter tuning
 watch the [video](https://www.youtube.com/watch?v=a0oA5VmVFhQ&feature=youtu.be)
 
 ```
-gamma = 0.9511969141631759
-learning_rate = 0.017200527912726204
-np_float = "float32"
-seed = 996
-nn_size = 64
+### Hyperparameters 
+
+hp = {'batch_size': 64, 'n_steps': 2048, 'gamma': 0.9999, 'lr': 0.00045431178185513705,
+      'ent_coef': 0.0007188057028259272, 'clip_range': 0.2, 'n_epochs': 10, 'gae_lambda': 0.9, 'max_grad_norm': 1,
+      'vf_coef': 0.49782864770311314, 'net_arch': 'medium', 'log_std_init': -0.9591570156697942, 'sde_sample_freq': 32,
+      'ortho_init': False, 'activation_fn': 'leaky_relu'}
+
+model = PPO(
+    MlpPolicy,
+    env,
+    n_steps=hp["n_steps"],
+    batch_size=hp["batch_size"],
+    gamma=hp["gamma"],
+    learning_rate=hp["lr"],
+    ent_coef=hp["ent_coef"],
+    clip_range=hp["clip_range"],
+    n_epochs=hp["n_epochs"],
+    gae_lambda=hp["gae_lambda"],
+    max_grad_norm=hp["max_grad_norm"],
+    vf_coef=hp["vf_coef"],
+    sde_sample_freq=hp["sde_sample_freq"],
+    policy_kwargs=dict(
+        log_std_init=hp["log_std_init"],
+        net_arch=[dict(pi=[128, 128], vf=[128, 128])],
+        activation_fn=nn.LeakyReLU,
+        ortho_init=hp["ortho_init"],
+
+    ),
+    verbose=0
+)
 ```
 
 ## Training
