@@ -33,7 +33,7 @@ env_id = 'LunarLander-v2'
 timesteps = 2000000
 reward_threshold = 200
 episodes_threshold = 1000
-study_name = "superlunarv4"
+study_name = "superlunarv5"
 eval_env = gym.make(env_id)
 video_folder = './videos'
 video_length = 3000
@@ -161,9 +161,9 @@ def objective(trial):
                         print(f"Mean reward: {mean_reward:.2f} ")
                         print("=========== NEXTGRID.AI ================")
                     # Report intermediate objective value to Optima and Handle pruning
-                    trial.report(episodes, self.num_timesteps)
-                    if trial.should_prune():
-                        raise optuna.TrialPruned()
+                    # trial.report(episodes, self.num_timesteps)
+                    # if trial.should_prune():
+                    #     raise optuna.TrialPruned()
 
                     # New best model, you could save the agent here
                     if episodes > episodes_threshold:
@@ -197,7 +197,7 @@ storage = 'mysql://root:@34.122.181.208/rl'
 
 study = optuna.create_study(study_name=study_name, storage=storage,
                             pruner=optuna.pruners.MedianPruner(), load_if_exists=True)
-study.optimize(objective, n_trials=5, n_jobs=1)
+study.optimize(objective, n_trials=1, n_jobs=1)
 # df = study.trials_dataframe(attrs=('number', 'value', 'params', 'state'))
 # print(df) , direction='maximize'
 print(study.best_params)
