@@ -38,9 +38,9 @@ from stable_baselines3.common.callbacks import CallbackList, BaseCallback, Check
 env_id = 'LunarLander-v2'
 # env_id = 'CartPole-v1'
 
-timesteps = 500000
+timesteps = 400000
 reward_threshold = 200
-study_name = "superluna"
+study_name = "superlunar"
 eval_env = gym.make(env_id)
 video_folder = './videos'
 video_length = 3000
@@ -66,7 +66,7 @@ def objective(trial):
     batch_size = trial.suggest_categorical(
         "batch_size", [8, 16, 32, 64, 128, 256, 512])
     n_steps = trial.suggest_categorical(
-        "n_steps", [8, 16, 32, 64, 128, 256, 512, 1024, 2048])
+        "n_steps", [256, 512, 1024, 2048, 4096])
     gamma = trial.suggest_categorical(
         "gamma", [0.9, 0.95, 0.98, 0.99, 0.995, 0.999, 0.9999])
     learning_rate = trial.suggest_loguniform("lr", 2e-4, 6e-4)
@@ -80,7 +80,7 @@ def objective(trial):
     max_grad_norm = trial.suggest_categorical(
         "max_grad_norm", [0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 2, 5])
     vf_coef = trial.suggest_uniform("vf_coef", 0, 1)
-    net_arch = trial.suggest_categorical("net_arch", ["small", "medium"])
+    net_arch = trial.suggest_categorical("net_arch", ["small", "medium", "large"])
     log_std_init = trial.suggest_uniform("log_std_init", -4, 1)
     sde_sample_freq = trial.suggest_categorical(
         "sde_sample_freq", [-1, 8, 16, 32, 64, 128, 256])
@@ -91,7 +91,8 @@ def objective(trial):
 
     net_arch = {
         "small": [dict(pi=[64, 64], vf=[64, 64])],
-        "medium": [dict(pi=[256, 256], vf=[256, 256])],
+        "medium": [dict(pi=[128, 128], vf=[128, 128])],
+        "large": [dict(pi=[256, 256], vf=[256, 256])],
     }[net_arch]
 
     activation_fn = {"tanh": nn.Tanh, "relu": nn.ReLU,
@@ -167,7 +168,7 @@ def objective(trial):
                         print(f"Mean reward: {mean_reward:.2f} ")
                         print("=========== NEXTGRID.AI ================")
                     # Report intermediate objective value to Optima and Handle pruning
-                    trial.report(mean_reward, episodes)
+                    trial.report(mean_reward, self.num_timesteps)
                     if trial.should_prune():
                         raise optuna.TrialPruned()
 
@@ -182,13 +183,13 @@ def objective(trial):
 
     callback = RewardCallback(check_freq=10000, log_dir=log_dir)
     model.learn(total_timesteps=int(timesteps), callback=callback)
-    print(episodes)
+
 
     # ==== Rest environment
     del model
     env.reset()
 
-    return episodes
+    return mean_reward
 
 
 # storage = optuna.storages.RedisStorage(
@@ -196,11 +197,11 @@ def objective(trial):
 # )
 storage = 'mysql://root:@34.122.181.208/rl'
 
-study = optuna.create_study(study_name=study_name, storage=storage,
+study = optuna.create_study(study_name=study_name, storage=storage, direction='maximize',
                             pruner=optuna.pruners.MedianPruner(), load_if_exists=True)
-study.optimize(objective, n_trials=5, n_jobs=1)
+study.optimize(objective, n_trials=2, n_jobs=1)
 # df = study.trials_dataframe(attrs=('number', 'value', 'params', 'state'))
-# print(df) , direction='maximize'
+# print(df) ,
 print(study.best_params)
 # print(study.best_value)  # Get best objective value.
 # print(study.best_trial)  # Get best trial's information.

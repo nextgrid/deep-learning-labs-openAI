@@ -33,7 +33,7 @@ metadata:
   name: rl-hpa-wt3z
   namespace: default
 spec:
-  maxReplicas: 5
+  maxReplicas: 10
   metrics:
     - resource:
         name: cpu
