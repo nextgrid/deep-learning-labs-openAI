@@ -38,9 +38,10 @@ from stable_baselines3.common.callbacks import CallbackList, BaseCallback, Check
 env_id = 'LunarLander-v2'
 # env_id = 'CartPole-v1'
 
-timesteps = 400000
+timesteps = 2000000
 reward_threshold = 200
-study_name = "superlunar"
+episodes_threshold = 1200
+study_name = "superlunarv2"
 eval_env = gym.make(env_id)
 video_folder = './videos'
 video_length = 3000
@@ -171,6 +172,11 @@ def objective(trial):
                     trial.report(mean_reward, self.num_timesteps)
                     if trial.should_prune():
                         raise optuna.TrialPruned()
+
+                    # New best model, you could save the agent here
+                    if episodes > episodes_threshold:
+                        print("REWARD ACHIVED")
+                        return False
 
                     # New best model, you could save the agent here
                     if mean_reward > reward_threshold:
