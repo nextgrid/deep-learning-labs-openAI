@@ -77,7 +77,7 @@ To run training & test checkout this [colab notebook](https://colab.research.goo
 
 ### Video Trained model
 
-![LunarLander-v2 Video](https://www.youtube.com/watch?v=OKQFbvNj6JI&feature=youtu.be)
+[LunarLander-v2 Video](https://www.youtube.com/watch?v=OKQFbvNj6JI&feature=youtu.be)
 
 ## Training
 ```
