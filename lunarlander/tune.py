@@ -8,14 +8,6 @@ import pyvirtualdisplay
 import os
 import optuna
 
-# Video
-from pathlib import Path
-from IPython import display as ipythondisplay
-
-# Stable baselines
-
-# DQN specific
-
 from stable_baselines3 import PPO
 from stable_baselines3.ppo import MlpPolicy
 from stable_baselines3.common.env_util import make_vec_env
@@ -40,8 +32,8 @@ env_id = 'LunarLander-v2'
 
 timesteps = 2000000
 reward_threshold = 200
-episodes_threshold = 1500
-study_name = "superlunarv3"
+episodes_threshold = 1000
+study_name = "superlunarv4"
 eval_env = gym.make(env_id)
 video_folder = './videos'
 video_length = 3000
@@ -169,7 +161,7 @@ def objective(trial):
                         print(f"Mean reward: {mean_reward:.2f} ")
                         print("=========== NEXTGRID.AI ================")
                     # Report intermediate objective value to Optima and Handle pruning
-                    trial.report(mean_reward, self.num_timesteps)
+                    trial.report(episodes, self.num_timesteps)
                     if trial.should_prune():
                         raise optuna.TrialPruned()
 
@@ -205,7 +197,7 @@ storage = 'mysql://root:@34.122.181.208/rl'
 
 study = optuna.create_study(study_name=study_name, storage=storage,
                             pruner=optuna.pruners.MedianPruner(), load_if_exists=True)
-study.optimize(objective, n_trials=2, n_jobs=1)
+study.optimize(objective, n_trials=5, n_jobs=1)
 # df = study.trials_dataframe(attrs=('number', 'value', 'params', 'state'))
 # print(df) , direction='maximize'
 print(study.best_params)
