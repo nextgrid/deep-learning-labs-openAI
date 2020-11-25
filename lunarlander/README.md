@@ -75,13 +75,9 @@ Kubernetes
 To run hyper parameter optimization run the file `tune.py`  
 To run training & test checkout this [colab notebook](https://colab.research.google.com/drive/1bhJw-oXYbLApc3EpfyX3IZCn6_S1O_Id#scrollTo=U7D2_Fjzf935)
 
-### GIF Trained model
+### Video Trained model
 
-![CartPole Recording](https://storage.googleapis.com/nextgrid_github_repo_visuals/Github%20Graphics%20/gif/cart-pole.gif)
-
-### Plotting
-
-![CartPole Plotting](https://storage.googleapis.com/nextgrid_github_repo_visuals/Github%20Graphics%20/img/Screenshot%202020-11-04%20at%2015.44.55.png)
+![LunarLander-v2 Video](https://www.youtube.com/watch?v=OKQFbvNj6JI&feature=youtu.be)
 
 ## Training
 ```
