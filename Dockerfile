@@ -31,5 +31,5 @@ COPY . /tmp/
 # ENTRYPOINT ["/tmp/entrypoint.sh"]
 # ENTRYPOINT python /tmp/lunarlander/lunarlander.py && /bin/bash
 # ENTRYPOINT python /tmp/mountaincar/hptuning.py && /bin/bash
-ENTRYPOINT python /tmp/lunarlander/tune.py && /bin/bash
+ENTRYPOINT python /tmp/lunarlandercontinues/tune.py && /bin/bash
 
