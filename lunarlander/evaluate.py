@@ -47,12 +47,9 @@ eval_env = DummyVecEnv([lambda: gym.make(env_id)])
 
 obs = env.reset()
 
-
-
-hp = {'batch_size': 64, 'n_steps': 2048, 'gamma': 0.9999, 'lr': 0.00045431178185513705,
-      'ent_coef': 0.0007188057028259272, 'clip_range': 0.2, 'n_epochs': 10, 'gae_lambda': 0.9, 'max_grad_norm': 1,
-      'vf_coef': 0.49782864770311314, 'net_arch': 'medium', 'log_std_init': -0.9591570156697942, 'sde_sample_freq': 32,
-      'ortho_init': False, 'activation_fn': 'leaky_relu'}
+hp = {'activation_fn': 'leaky_relu', 'batch_size': 8, 'clip_range': 0.4, 'ent_coef': 1.11811e-07, 'gae_lambda': 0.9,
+      'gamma': 0.9999, 'log_std_init': -0.647632, 'lr': 0.000522198, 'max_grad_norm': 0.6, 'net_arch': 'medium',
+      'n_epochs': 10, 'n_steps': 2048, 'ortho_init': True, 'sde_sample_freq': 64, 'vf_coef': 0.887769}
 
 model = PPO(
     MlpPolicy,
@@ -161,14 +158,14 @@ class RewardCallback(BaseCallback):
 
                 # New best model, you could save the agent here
                 if mean_reward > reward_threshold:
-                    new_evaluation = evaluate_policy(model, eval_env, n_eval_episodes=5, deterministic=True, render=False,
+                    new_evaluation = evaluate_policy(model, eval_env, n_eval_episodes=5, deterministic=True,
+                                                     render=False,
                                                      callback=None, reward_threshold=None, return_episode_rewards=False)
                     score = new_evaluation[0]
 
                     print("<======SCORE======>")
                     print(score)
                     if score > reward_threshold:
-
                         print("Woop")
                         return False
 
