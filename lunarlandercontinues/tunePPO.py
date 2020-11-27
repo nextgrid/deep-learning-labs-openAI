@@ -197,11 +197,11 @@ storage = 'mysql://root:@34.122.181.208/rl'
 
 study = optuna.create_study(study_name=study_name, storage=storage,
                             pruner=optuna.pruners.MedianPruner(), load_if_exists=True)
-study.optimize(objective, n_trials=10, n_jobs=1)
+# study.optimize(objective, n_trials=10, n_jobs=1)
 # df = study.trials_dataframe(attrs=('number', 'value', 'params', 'state'))
 # print(df) , direction='maximize'
 print(study.best_params)
-# print(study.best_value)  # Get best objective value.
-# print(study.best_trial)  # Get best trial's information.
+print(study.best_value)  # Get best objective value.
+print(study.best_trial)  # Get best trial's information.
 # print(study.trials)  # Get all trials' information.
-# len(study.trials) # Get number of trails.
+len(study.trials) # Get number of trails.

@@ -4,7 +4,9 @@
       <w>coef</w>
       <w>nextgrid</w>
       <w>optuna</w>
+      <w>ornstein</w>
       <w>ortho</w>
+      <w>uhlenbeck</w>
     </words>
   </dictionary>
 </component>
