@@ -1,29 +1,3 @@
-
-
-
-    hyperparams = {
-        "gamma": gamma,
-        "learning_rate": learning_rate,
-        "batch_size": batch_size,
-        "buffer_size": buffer_size,
-        "train_freq": train_freq,
-        "gradient_steps": gradient_steps,
-        "n_episodes_rollout": n_episodes_rollout,
-        "policy_kwargs": dict(net_arch=net_arch),
-    }
-
-    if noise_type == "normal":
-        hyperparams["action_noise"] = NormalActionNoise(
-            mean=np.zeros(trial.n_actions), sigma=noise_std * np.ones(trial.n_actions)
-        )
-    elif noise_type == "ornstein-uhlenbeck":
-        hyperparams["action_noise"] = OrnsteinUhlenbeckActionNoise(
-            mean=np.zeros(trial.n_actions), sigma=noise_std * np.ones(trial.n_actions)
-        )
-
-    return hyperparams
-
-
 from torch import nn as nn
 import gym
 import numpy as np
@@ -34,8 +8,9 @@ import pyvirtualdisplay
 import os
 import optuna
 
-from stable_baselines3 import PPO
-from stable_baselines3.ppo import MlpPolicy
+from stable_baselines3 import TD3
+from stable_baselines3.td3.policies import MlpPolicy
+from stable_baselines3.common.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise
 from stable_baselines3.common.env_util import make_vec_env
 
 from stable_baselines3.common.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise
@@ -51,15 +26,15 @@ from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.callbacks import CallbackList, BaseCallback, CheckpointCallback, EveryNTimesteps, \
     EvalCallback, StopTrainingOnRewardThreshold, StopTrainingOnMaxEpisodes
 
-# ======================================================================== Enviorment settings
+# ======================================================================== Environment settings
 
-env_id = 'LunarLanderContinuous-v2'
+env_id = 'BipedalWalker-v3'
 # env_id = 'CartPole-v1'
 
 timesteps = 2000000
 reward_threshold = 200
 episodes_threshold = 1000
-study_name = "lunarlandercontinuesv2"
+study_name = "BipedalWalker"
 eval_env = gym.make(env_id)
 video_folder = './videos'
 video_length = 3000
@@ -84,7 +59,7 @@ def objective(trial):
 
     # ======================================================================== Hyper Parameters
     gamma = trial.suggest_categorical("gamma", [0.9, 0.95, 0.98, 0.99, 0.995, 0.999, 0.9999])
-    learning_rate = trial.suggest_loguniform("lr", 1e-5, 1)
+    learning_rate = trial.suggest_loguniform("lr", 2e-4, 6e-4)
     batch_size = trial.suggest_categorical("batch_size", [16, 32, 64, 100, 128, 256, 512])
     buffer_size = trial.suggest_categorical("buffer_size", [int(1e4), int(1e5), int(1e6)])
 
@@ -98,20 +73,20 @@ def objective(trial):
         gradient_steps = train_freq
         n_episodes_rollout = -1
 
-    noise_type = trial.suggest_categorical("noise_type", ["ornstein-uhlenbeck", "normal", None])
+    # noise_type = trial.suggest_categorical("noise_type", ["ornstein-uhlenbeck", "normal", None])
     noise_std = trial.suggest_uniform("noise_std", 0, 1)
 
     net_arch = trial.suggest_categorical("net_arch", ["small", "medium", "big"])
     # activation_fn = trial.suggest_categorical('activation_fn', [nn.Tanh, nn.ReLU, nn.ELU, nn.LeakyReLU])
 
-    if noise_type == "normal":
-        hyperparams["action_noise"] = NormalActionNoise(
-            mean=np.zeros(trial.n_actions), sigma=noise_std * np.ones(trial.n_actions)
-        )
-    elif noise_type == "ornstein-uhlenbeck":
-        hyperparams["action_noise"] = OrnsteinUhlenbeckActionNoise(
-            mean=np.zeros(trial.n_actions), sigma=noise_std * np.ones(trial.n_actions)
-        )
+    # if noise_type == "normal":
+    #     noise_type = NormalActionNoise(
+    #         mean=np.zeros(trial.n_actions), sigma=noise_std * np.ones(trial.n_actions)
+    #     )
+    # elif noise_type == "ornstein-uhlenbeck":
+    #     noise_type = OrnsteinUhlenbeckActionNoise(
+    #         mean=np.zeros(trial.n_actions), sigma=noise_std * np.ones(trial.n_actions)
+    #     )
 
     net_arch = {
         "small": [64, 64],
@@ -119,23 +94,19 @@ def objective(trial):
         "big": [400, 300],
     }[net_arch]
 
-
-
-
     model = TD3(
         MlpPolicy,
         env,
         gamma=gamma,
-        n_steps=n_steps,
         batch_size=batch_size,
         buffer_size=buffer_size,
         train_freq=train_freq,
         learning_rate=learning_rate,
         gradient_steps=gradient_steps,
         n_episodes_rollout=n_episodes_rollout,
-        action_noise=action_noise,
+        # action_noise=noise_type,
         policy_kwargs=dict(net_arch=net_arch),
-        verbose=1
+        verbose=0
     )
 
     # ======================================================================== Hyper Parameters
@@ -205,7 +176,6 @@ def objective(trial):
     callback = RewardCallback(check_freq=10000, log_dir=log_dir)
     model.learn(total_timesteps=int(timesteps), callback=callback)
 
-
     # ==== Rest environment
     del model
     env.reset()
@@ -220,11 +190,11 @@ storage = 'mysql://root:@34.122.181.208/rl'
 
 study = optuna.create_study(study_name=study_name, storage=storage,
                             pruner=optuna.pruners.MedianPruner(), load_if_exists=True)
-study.optimize(objective, n_trials=10, n_jobs=1)
+study.optimize(objective, n_trials=5, n_jobs=1)
 # df = study.trials_dataframe(attrs=('number', 'value', 'params', 'state'))
 # print(df) , direction='maximize'
 print(study.best_params)
 # print(study.best_value)  # Get best objective value.
 # print(study.best_trial)  # Get best trial's information.
-# print(study.trials)  # Get all trials' information.
-# len(study.trials) # Get number of trails.
+# # print(study.trials)  # Get all trials' information.
+# len(study.trials)  # Get number of trails.
