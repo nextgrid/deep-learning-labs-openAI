@@ -2,6 +2,7 @@
 
 # LunarLanderContinues-v2
 
+_Will be improved with TD3_   
 Mission: Take top position in all OpenAI leaderboards. By [Nextgrid](https://nextgrid.ai) and [Deep Learning Labs](https://nextgrid.ai/deep-learning-labs/) find all attempts [here](https://github.com/nextgrid/deep-learning-labs-openAI)
 
 ## Solution
