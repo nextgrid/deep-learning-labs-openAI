@@ -114,11 +114,10 @@ Kubernetes
 
 To run hyper parameter optimization run the file `tuneTD3.py`  
 To run training & test checkout this [colab notebook](https://colab.research.google.com/drive/1Zyn9Q_Gf3KnVIhdl9t2ond5IjJNaTriL?usp=sharing)
-**For some reason outputs don't want to be saved despite correct settings in Colab, Result may variate**
+
 
 ### Video of trained model
 
-[LunarLander-v2 Video](https://youtu.be/yhj-t5V9TkY)
 
 
 ### Contributors
