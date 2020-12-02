@@ -9,7 +9,7 @@ Mission: Take top position in all OpenAI leaderboard. By [Nextgrid](https://next
 
 ### HyperParameter tuning
 HP tuning with Optuna
-See [tunePPO.py](tuneTD3.py) for complete HP code.   
+See [tuneTD3.py](tuneTD3.py) for complete HP code.   
 `Stables-baselines3`   
 `Optuna`  
 `Mysql`  
