@@ -1,0 +1,133 @@
+[![Nextgrid Artificial Intelligence](https://storage.googleapis.com/nextgrid_github_repo_visuals/Github%20Graphics%20/big-banner.jpg)](https://nextgrid.ai)
+
+# BipedalWalker-v3
+
+Mission: Take top position in all OpenAI leaderboard. By [Nextgrid](https://nextgrid.ai) and [Deep Learning Labs](https://nextgrid.ai/deep-learning-labs/) find all attempts [here](https://github.com/nextgrid/deep-learning-labs-openAI)
+
+## Solution
+
+
+### HyperParameter tuning
+HP tuning with Optuna
+See [tunePPO.py](tuneTD3.py) for complete HP code.   
+`Stables-baselines3`   
+`Optuna`  
+`Mysql`  
+`Docker`  
+`Kubernetes` 
+
+Optima / Docker / Kubernetes was used to find the best hyper parameters
+
+#### Trails
+Did run 75 trails where trail 54 delivered the best result solving the BipedalWalker problem on 191 episodes 
+
+```
+FrozenTrial(number=54, value=191.0, datetime_start=datetime.datetime(2020, 11, 30, 21, 15, 53), 
+datetime_complete=datetime.datetime(2020, 12, 1, 0, 44, 47), 
+
+params={'batch_size': 256, 'buffer_size': 10000, 
+'episodic': False, 'gamma': 0.99, 'lr': 0.000200462, 'net_arch': 'big', 'noise_std': 0.329398, 'train_freq': 128}, 
+```
+
+
+```
+### Hyperparameters 
+
+params = params={'batch_size': 256, 'buffer_size': 10000, 'episodic': False, 
+                 'gamma': 0.99, 'lr': 0.000200462, 'net_arch': 'big', 
+                 'noise_std': 0.329398, 'train_freq': 128},         
+
+net_arch = {
+        "small": [64, 64],
+        "medium": [256, 256],
+        "big": [400, 300],
+    }
+
+model = TD3(
+        MlpPolicy,
+        env,
+        gamma=params["gamma"],
+        batch_size=params["batch_size"],
+        buffer_size=params["buffer_size"],
+        train_freq=params["train_freq"],
+        learning_rate=params["lr"],
+        learning_starts=params["learning_starts"],
+        gradient_steps=params["train_freq"],
+        n_episodes_rollout=params["n_episodes_rollout"],
+        policy_kwargs=dict(net_arch=net_arch['big']),
+        verbose=0,
+        tensorboard_log=logs_base_dir,
+    )
+```
+
+## Training
+```
+=========== NEXTGRID.AI ================
+Episodes: 189
+Num steps: 166000
+Mean Episode reward: -74.00 
+Last Episode reward: -87.67 
+=========== NEXTGRID.AI ================
+Episodes: 190
+Num steps: 167000
+Mean Episode reward: 88.00 
+Last Episode reward: 263.86 
+=========== NEXTGRID.AI ================
+Episodes: 190
+Num steps: 168000
+Mean Episode reward: 88.00 
+Last Episode reward: 263.86 
+=========== NEXTGRID.AI ================
+Episodes: 191
+Num steps: 169000
+Mean Episode reward: 201.00 
+Last Episode reward: 265.93 
+=========== NEXTGRID.AI ================
+Reward threshold achieved
+Evaluating model....
+Score over 100 episodes [275.1147096732084, 276.1834264806223, 274.45934556129595, 273.9912809525984, 276.74006692697105, 276.1300564358224, 276.35187089296176, -47.169154525221, 274.77484103498034, 275.419093394974, 273.693781521827, 273.9780172121841, 275.3118098264184, 273.2628214879278, 275.2252016487982, 273.7178178096109, -27.571107156001617, 278.24973773385835, 275.3143086879973, 274.70311688326746, 58.85766363999579, 274.9232815850588, 278.8069556974251, 71.96388869295822, 277.1737421354908, 274.6386466594853, 274.5635523357021, 276.7231808292402, 274.2741383507473, 275.2255065392589, 276.53835645146944, 276.84513789294425, 273.65079114626656, 275.2890688441277, 275.4815442027036, 277.434967244321, 25.28874676626174, 272.27268166388683, 272.18124319341615, 275.82025210346757, 277.9115510613163, 270.32631505990656, 275.237672126824, 276.29842128742615, 276.37964573926354, 278.1435200330819, 271.3433721541026, 275.18250535304617, 275.9210018426215, 276.1143606688059, 274.27587432409916, 274.31040494847787, 273.409110141121, 277.9850160116521, 275.95167892189585, 276.33284576789424, 277.21613342937826, 276.236103303509, 273.67219678616874, 272.55766494302054, 274.611111731341, 274.789007014852, 278.44002880436784, 32.33024328643697, 277.6970430513749, -33.59247630508743, 275.43032338588034, 273.68443927534133, 276.6096082860876, -82.84681302308664, 274.19813126497326, 275.13748120939607, 275.15683796870246, 273.1268371387072, 275.2149410054952, 111.78942176237857, 273.53372785820073, 277.85451889798105, 274.9543525265985, 275.18188844345707, 275.0856044748093, 36.128612422967336, 273.7690784505544, 275.8761600958862, 275.0505995217864, 276.3110373499183, 276.86079087621783, 275.2943236590115, 47.59643030516676, 275.27479769586375, 276.00149850370804, 276.42660584948095, 275.12000867354396, 276.2730747657285, 276.5766418855568, 278.14946921224816, 274.4374729240759, 81.66503792821223, 276.1137331989027, 275.3487096311651]
+245.07300123370143
+sghould print eval now
+245.07300123370143
+Evaluation over 100 Episodes: 245.07 
+MISSION COMPLETED 🤖
+Score: 245.07 reached at Episode: 191
+```
+## Evaluation
+```buildoutcfg
+Score over 100 episodes [275.1147096732084, 276.1834264806223, 274.45934556129595, 273.9912809525984, 276.74006692697105, 276.1300564358224, 276.35187089296176, -47.169154525221, 274.77484103498034, 275.419093394974, 273.693781521827, 273.9780172121841, 275.3118098264184, 273.2628214879278, 275.2252016487982, 273.7178178096109, -27.571107156001617, 278.24973773385835, 275.3143086879973, 274.70311688326746, 58.85766363999579, 274.9232815850588, 278.8069556974251, 71.96388869295822, 277.1737421354908, 274.6386466594853, 274.5635523357021, 276.7231808292402, 274.2741383507473, 275.2255065392589, 276.53835645146944, 276.84513789294425, 273.65079114626656, 275.2890688441277, 275.4815442027036, 277.434967244321, 25.28874676626174, 272.27268166388683, 272.18124319341615, 275.82025210346757, 277.9115510613163, 270.32631505990656, 275.237672126824, 276.29842128742615, 276.37964573926354, 278.1435200330819, 271.3433721541026, 275.18250535304617, 275.9210018426215, 276.1143606688059, 274.27587432409916, 274.31040494847787, 273.409110141121, 277.9850160116521, 275.95167892189585, 276.33284576789424, 277.21613342937826, 276.236103303509, 273.67219678616874, 272.55766494302054, 274.611111731341, 274.789007014852, 278.44002880436784, 32.33024328643697, 277.6970430513749, -33.59247630508743, 275.43032338588034, 273.68443927534133, 276.6096082860876, -82.84681302308664, 274.19813126497326, 275.13748120939607, 275.15683796870246, 273.1268371387072, 275.2149410054952, 111.78942176237857, 273.53372785820073, 277.85451889798105, 274.9543525265985, 275.18188844345707, 275.0856044748093, 36.128612422967336, 273.7690784505544, 275.8761600958862, 275.0505995217864, 276.3110373499183, 276.86079087621783, 275.2943236590115, 47.59643030516676, 275.27479769586375, 276.00149850370804, 276.42660584948095, 275.12000867354396, 276.2730747657285, 276.5766418855568, 278.14946921224816, 274.4374729240759, 81.66503792821223, 276.1137331989027, 275.3487096311651]
+245.07300123370143
+```
+
+### Stack
+
+```
+Stable-baselines3
+Pytorch
+Gym
+Optima
+Docker
+Kubernetes
+```
+
+### How to run
+
+To run hyper parameter optimization run the file `tuneTD3.py`  
+To run training & test checkout this [colab notebook](https://colab.research.google.com/drive/1Zyn9Q_Gf3KnVIhdl9t2ond5IjJNaTriL?usp=sharing)
+**For some reason outputs don't want to be saved despite correct settings in Colab, Result may variate**
+
+### Video of trained model
+
+[LunarLander-v2 Video](https://youtu.be/yhj-t5V9TkY)
+
+
+### Contributors
+- [Mathias Åsberg]() 
+
+[![Deep Learning Labs AI ](https://storage.googleapis.com/nextgrid_github_repo_visuals/Github%20Graphics%20/small-banner.jpg)](https://nextgrid.ai/dll)
+
+## Nextgrid AI Seed program
+
+Applications for [Nextgrid](https://nextgrid.ai) AI seed program is now open. We are looking for briliant business & people that are building AI-first solutions. Read more and apply at [AI seed program](https://nextgrid.ai/seed/)
+
+[![Nextgrid Partners](https://storage.googleapis.com/nextgrid_github_repo_visuals/Github%20Graphics%20/partner-banner.jpg)](https://nextgrid.ai/partners/)

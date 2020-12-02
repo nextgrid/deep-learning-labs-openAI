@@ -104,7 +104,6 @@ def objective(trial):
         learning_rate=learning_rate,
         gradient_steps=gradient_steps,
         n_episodes_rollout=n_episodes_rollout,
-        # action_noise=noise_type,
         policy_kwargs=dict(net_arch=net_arch),
         verbose=0
     )
@@ -173,7 +172,7 @@ def objective(trial):
 
     # ======================================================================== Training
 
-    callback = RewardCallback(check_freq=10000, log_dir=log_dir)
+    callback = RewardCallback(check_freq=2500, log_dir=log_dir)
     model.learn(total_timesteps=int(timesteps), callback=callback)
 
     # ==== Rest environment
@@ -190,11 +189,12 @@ storage = 'mysql://root:@34.122.181.208/rl'
 
 study = optuna.create_study(study_name=study_name, storage=storage,
                             pruner=optuna.pruners.MedianPruner(), load_if_exists=True)
-study.optimize(objective, n_trials=5, n_jobs=1)
+# study.optimize(objective, n_trials=10, n_jobs=1)
 # df = study.trials_dataframe(attrs=('number', 'value', 'params', 'state'))
 # print(df) , direction='maximize'
 print(study.best_params)
-# print(study.best_value)  # Get best objective value.
-# print(study.best_trial)  # Get best trial's information.
-# # print(study.trials)  # Get all trials' information.
+print(study.best_value)  # Get best objective value.
+print(study.best_trial)  # Get best trial's information.
+#print(study.trials)  # Get all trials' information.
 # len(study.trials)  # Get number of trails.
+

@@ -11,7 +11,7 @@ Mission: Take top position in all [OpenAI leaderboards](https://github.com/opena
 - [ ] Acrobot-v1
 - [x] LunarLander-v2 [solution](https://github.com/nextgrid/deep-learning-labs-openAI/tree/main/lunarlander)
 - [x] LunarLanderContinuous-v2 [solution](https://github.com/nextgrid/deep-learning-labs-openAI/blob/main/lunarlandercontinues)
-- [ ] BipedalWalker-v2
+- [X] BipedalWalker-v3 [solution](https://github.com/nextgrid/deep-learning-labs-openAI/tree/main/bipedalwalker-v3) 
 - [ ] BipedalWalkerHardcore-v2
 - [ ] CarRacing-v0
 
