@@ -30,7 +30,7 @@ env_id = 'BipedalWalker-v3'
 timesteps = 2000000
 reward_threshold = 300
 episodes_threshold = 500
-study_name = "BipedalWalkerSacNew"
+study_name = "BPW"
 eval_env = gym.make(env_id)
 video_folder = './videos'
 video_length = 3000
@@ -45,7 +45,7 @@ def sample_sac_params(trial: optuna.Trial) -> Dict[str, Any]:
     :return:
     """
     gamma = trial.suggest_categorical("gamma", [0.9, 0.95, 0.98, 0.99, 0.995, 0.999, 0.9999])
-    learning_rate = trial.suggest_loguniform("lr", 1e-5, 1)
+    learning_rate = trial.suggest_loguniform("lr", 2e-4, 9e-4)
     batch_size = trial.suggest_categorical("batch_size", [32, 64, 128, 256, 512])
     buffer_size = trial.suggest_categorical("buffer_size", [int(5e4), int(1e5), int(3e5), int(5e5), int(1e6)])
     learning_starts = trial.suggest_categorical("learning_starts", [100, 1000, 10000, 20000])
@@ -73,7 +73,6 @@ def sample_sac_params(trial: optuna.Trial) -> Dict[str, Any]:
         "target_entropy": target_entropy,
         "policy_kwargs": dict(log_std_init=log_std_init, net_arch=net_arch),
     }
-
 
 
 # ======================================================================== Optuna Loop
