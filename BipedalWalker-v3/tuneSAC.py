@@ -29,9 +29,9 @@ env_id = 'BipedalWalker-v3'
 # env_id = 'CartPole-v1'
 timesteps = 2000000
 reward_threshold = 300
-episodes_threshold = 400
+episodes_threshold = 300
 callback_check_freq = 5000
-study_name = "BPW4"
+study_name = "BPW5"
 eval_env = gym.make(env_id)
 video_folder = './videos'
 video_length = 3000
@@ -39,7 +39,7 @@ logs_base_dir = "./log"
 log_dir = "./log"
 
 
-def sample_sac_params(trial: optuna.Trial) -> Dict[str, Any]:
+def sac_params(trial: optuna.Trial) -> Dict[str, Any]:
     """
     Sampler for SAC hyperparams.
     :param trial:
@@ -88,7 +88,7 @@ def objective(trial):
     mean_reward = 0
 
     # ======================================================================== HyperParameters
-    hp = sample_sac_params(trial)
+    hp = sac_params(trial)
 
     model = SAC(
         MlpPolicy,
@@ -163,9 +163,9 @@ def objective(trial):
                         print(f"Last Episode reward: {y[-1]:.2f} ")
                         print("=========== NEXTGRID.AI ================")
                     # Report intermediate objective value to Optima and Handle pruning
-                    trial.report(mean_reward, episodes)
-                    if trial.should_prune():
-                        raise optuna.TrialPruned()
+                    # trial.report(mean_reward, episodes)
+                    # if trial.should_prune():
+                    #     raise optuna.TrialPruned()
 
                     # New best model, you could save the agent here
                     if episodes > episodes_threshold:
@@ -174,7 +174,7 @@ def objective(trial):
                         return False
 
                     # New best model, you could save the agent here
-                    if mean_reward > reward_threshold:
+                    if mean_reward >= reward_threshold:
                         print("Reward threshold achieved")
                         print("Evaluating model....")
                         evals = evaluate(model, eval_env)
@@ -197,12 +197,14 @@ def objective(trial):
 
 
 storage = 'mysql://root:@34.122.181.208/rl'
-study = optuna.create_study(study_name=study_name, storage=storage,
-                            pruner=optuna.pruners.MedianPruner(), load_if_exists=True)
+study = optuna.create_study(study_name=study_name, storage=storage, load_if_exists=True)
 study.optimize(objective, n_trials=5, n_jobs=1)
+
+# study = optuna.create_study(study_name=study_name, storage=storage,
+#                             pruner=optuna.pruners.MedianPruner(), load_if_exists=True)
 # df = study.trials_dataframe(attrs=('number', 'value', 'params', 'state'))
 # print(df) , direction='maximize'
-# print(study.best_params)  # Get best params
+print(study.best_params)  # Get best params
 print(study.best_value)  # Get best objective value.
 print(study.best_trial)  # Get best trial's information.
 # print(study.trials)  # Get all trials' information.
