@@ -30,7 +30,8 @@ env_id = 'BipedalWalker-v3'
 timesteps = 2000000
 reward_threshold = 300
 episodes_threshold = 400
-study_name = "BPW2"
+callback_check_freq = 5000
+study_name = "BPW3"
 eval_env = gym.make(env_id)
 video_folder = './videos'
 video_length = 3000
@@ -187,7 +188,7 @@ def objective(trial):
             return True
 
     # ======================================================================== Training
-    callback = RewardCallback(check_freq=2500, log_dir=log_dir)
+    callback = RewardCallback(check_freq=callback_check_freq, log_dir=log_dir)
     model.learn(total_timesteps=int(timesteps), callback=callback)
     # ==== Rest environment
     del model
