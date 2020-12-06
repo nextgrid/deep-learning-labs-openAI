@@ -31,7 +31,7 @@ timesteps = 2000000
 reward_threshold = 300
 episodes_threshold = 400
 callback_check_freq = 5000
-study_name = "BPW3"
+study_name = "BPW4"
 eval_env = gym.make(env_id)
 video_folder = './videos'
 video_length = 3000
@@ -199,7 +199,7 @@ def objective(trial):
 storage = 'mysql://root:@34.122.181.208/rl'
 study = optuna.create_study(study_name=study_name, storage=storage,
                             pruner=optuna.pruners.MedianPruner(), load_if_exists=True)
-study.optimize(objective, n_trials=2, n_jobs=1)
+study.optimize(objective, n_trials=5, n_jobs=1)
 # df = study.trials_dataframe(attrs=('number', 'value', 'params', 'state'))
 # print(df) , direction='maximize'
 # print(study.best_params)  # Get best params
