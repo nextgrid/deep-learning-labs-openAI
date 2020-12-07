@@ -29,9 +29,9 @@ env_id = 'BipedalWalker-v3'
 # env_id = 'CartPole-v1'
 timesteps = 2000000
 reward_threshold = 300
-episodes_threshold = 300
+episodes_threshold = 700
 callback_check_freq = 5000
-study_name = "BPW5"
+study_name = "BPW6"
 eval_env = gym.make(env_id)
 video_folder = './videos'
 video_length = 3000
@@ -47,10 +47,10 @@ def sac_params(trial: optuna.Trial) -> Dict[str, Any]:
     """
     gamma = trial.suggest_categorical("gamma", [0.9, 0.95, 0.98, 0.99, 0.995, 0.999, 0.9999])
     learning_rate = trial.suggest_loguniform("lr", 2e-4, 9e-4)
-    batch_size = trial.suggest_categorical("batch_size", [32, 64, 128, 256, 512])
+    batch_size = trial.suggest_categorical("batch_size", [64, 128, 256, 512])
     buffer_size = trial.suggest_categorical("buffer_size", [int(5e4), int(1e5), int(3e5), int(5e5), int(1e6)])
     learning_starts = trial.suggest_categorical("learning_starts", [100, 1000, 10000, 20000])
-    train_freq = trial.suggest_categorical("train_freq", [16, 32, 64, 128, 256])
+    train_freq = trial.suggest_categorical("train_freq", [32, 64, 128])
     tau = trial.suggest_categorical("tau", [0.001, 0.005, 0.01, 0.02])
     gradient_steps = train_freq
     ent_coef = "auto"
