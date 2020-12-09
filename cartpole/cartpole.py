@@ -25,8 +25,8 @@ np_float = "float32"
 seed = 996
 nn_size = 64
 
-# Enviorment
-env = gym.make('LunarLander-v2')
+# Env
+env = gym.make('CartPole-v1')
 env.seed(seed)
 torch.manual_seed(seed)
 
