@@ -154,7 +154,7 @@ def objective(trial):
                     global mean_reward
                     episodes = len(y)
                     # print(episodes)
-                    mean_reward = np.mean(y[-10:])
+                    mean_reward = np.mean(y[-5:])
                     mean_reward = round(mean_reward, 0)
                     if self.verbose > 0:
                         print(f"Episodes: {episodes}")
@@ -181,7 +181,7 @@ def objective(trial):
                         print(evals)
                         print(f"Evaluation over 100 Episodes: {evals:.2f} ")
                         if evals >= reward_threshold:
-                            print(f"MISSION COMPLETED 🤖")
+                            print(f"MISSION COMPLETED")
                             print(f"Score: {evals:.2f} reached at Episode: {episodes} ")
                             return False
 
@@ -198,12 +198,12 @@ def objective(trial):
 
 storage = 'mysql://root:@34.122.181.208/rl'
 study = optuna.create_study(study_name=study_name, storage=storage, load_if_exists=True)
-study.optimize(objective, n_trials=5, n_jobs=1)
+study.optimize(objective, n_trials=1, n_jobs=1)
 
 # study = optuna.create_study(study_name=study_name, storage=storage,
-#                             pruner=optuna.pruners.MedianPruner(), load_if_exists=True)
+#                             pruner=optuna.pruners.MedianPruner(), , direction='maximize', load_if_exists=True)
 # df = study.trials_dataframe(attrs=('number', 'value', 'params', 'state'))
-# print(df) , direction='maximize'
+# print(df)
 print(study.best_params)  # Get best params
 print(study.best_value)  # Get best objective value.
 print(study.best_trial)  # Get best trial's information.
