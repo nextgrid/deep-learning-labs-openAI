@@ -2,14 +2,16 @@
 
 # BipedalWalker-v3
 
-Mission: Take top position in all OpenAI leaderboard. By [Nextgrid](https://nextgrid.ai) and [Deep Learning Labs](https://nextgrid.ai/deep-learning-labs/) find all attempts [here](https://github.com/nextgrid/deep-learning-labs-openAI)
+Mission: Take top position in all OpenAI leaderboard. By [Nextgrid](https://nextgrid.ai) and [Deep Learning Labs](https://nextgrid.ai/deep-learning-labs/) find all attempts [here](https://github.com/nextgrid/deep-learning-labs-openAI). The BipedalWalker was **solved on 164 Episodes** and is currently the no1 result.
 
 ## Solution
 After running DQN & TD3 I switched to SAC: Soft Actor Critic (SAC) Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor.
 
 ### HyperParameter tuning
 HP tuning with Optuna
-See [tuneTD3.py](tuneTD3.py) for complete HP code.   
+See [tuneSAC.py](tuneSAC.py) for complete HP code.  
+
+**Stack**:  
 `Stables-baselines3`   
 `Optuna`  
 `Mysql`  
@@ -18,7 +20,7 @@ See [tuneTD3.py](tuneTD3.py) for complete HP code.
 
 Optima / Docker / Kubernetes was used to find the best hyper parameters
 
-#### Trails
+### Optuna trials
 Did run +100 trials where trial 41 delivered the best result solving the BipedalWalker problem on 194 episodes. Did manage to get it down to 164 in colab 
 
 ```
@@ -119,7 +121,7 @@ To run training & test checkout this [colab notebook](https://colab.research.goo
 
 
 ### Contributors
-- [Mathias Åsberg]() 
+- [Mathias Åsberg](https://www.linkedin.com/in/imathias/) 
 
 [![Deep Learning Labs AI ](https://storage.googleapis.com/nextgrid_github_repo_visuals/Github%20Graphics%20/small-banner.jpg)](https://nextgrid.ai/dll)
 
