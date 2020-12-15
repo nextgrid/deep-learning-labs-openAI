@@ -28,8 +28,8 @@ env_id = 'MountainCarContinuous-v0'
 timesteps = 2000000
 reward_threshold = 90
 episodes_threshold = 300
-callback_check_freq = 1000
-study_name = "MountainCarContinuous_Trail_1"
+callback_check_freq = 2000
+study_name = "MountainCarContinuous_Trail_4"
 eval_env = gym.make(env_id)
 video_folder = './videos'
 video_length = 3000
@@ -53,14 +53,13 @@ def sac_params(trial: optuna.Trial) -> Dict[str, Any]:
     gradient_steps = train_freq
     ent_coef = "auto"
     sde_sample_freq = trial.suggest_categorical("sde_sample_freq", [-1, 8, 16, 32, 64, 128])
-    use_sde = trial.suggest_categorical("use_sde", [True, False])
-    log_std_init = trial.suggest_uniform("log_std_init", -5, 1)
-    net_arch = trial.suggest_categorical("net_arch", ["tiny", "small", "medium", "big"])
+    use_sde = True
+    log_std_init = trial.suggest_uniform("log_std_init", -4, 1)
+    net_arch = trial.suggest_categorical("net_arch", ["small", "medium", "big"])
     net_arch = {
-        "tiny": [64, 64],
-        "small": [128, 128],
-        "medium": [256, 256],
-        "big": [400, 300],
+        "small": [64, 64],
+        "medium": [128, 128],
+        "big": [256, 256],
     }[net_arch]
     target_entropy = "auto"
     return {
@@ -93,6 +92,8 @@ def objective(trial):
 
     # ======================================================================== HyperParameters
     hp = sac_params(trial)
+    print(hp)
+
 
     model = SAC(
         MlpPolicy,
@@ -172,9 +173,9 @@ def objective(trial):
                         print(f"Last Episode reward: {y[-1]:.2f} ")
                         print("=========== NEXTGRID.AI ================")
                     # Report intermediate objective value to Optima and Handle pruning
-                    # trial.report(mean_reward, episodes)
-                    # if trial.should_prune():
-                    #     raise optuna.TrialPruned()
+                    trial.report(mean_reward, episodes)
+                    if trial.should_prune():
+                        raise optuna.TrialPruned()
 
                     # New best model, you could save the agent here
                     if episodes > episodes_threshold:
@@ -206,7 +207,7 @@ def objective(trial):
 
 
 storage = 'mysql://root:@34.122.181.208/rl'
-study = optuna.create_study(study_name=study_name, storage=storage, load_if_exists=True)
+study = optuna.create_study(study_name=study_name, storage=storage, pruner=optuna.pruners.MedianPruner(), load_if_exists=True,)
 study.optimize(objective, n_trials=3, n_jobs=1)
 
 # study = optuna.create_study(study_name=study_name, storage=storage,
