@@ -39,7 +39,7 @@ log_dir = "./log"
 
 def sac_params(trial: optuna.Trial) -> Dict[str, Any]:
     """
-    Sampler for SAC hyperparams.
+    Sampler SAC hyperparams.
     :param trial:
     :return:
     """
