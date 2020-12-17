@@ -52,14 +52,15 @@ Did run +400 trials where trial 56 delivered the best result solving the Bipedal
 FrozenTrial(number=56, value=70.0, datetime_start=datetime.datetime(2020, 12, 15, 7, 50, 45), datetime_complete=datetime.datetime(2020, 12, 15, 8, 40, 35), params={'batch_size': 512, 'buffer_size': 10000, 'gamma': 0.95, 'learning_starts': 10, 'log_std_init': -1.4627, 'lr': 0.000969826, 'net_arch': 'big', 'sde_sample_freq': 32, 'tau': 0.02, 'train_freq': 64}```
 ```
 ### HyperParameters 
-
+```
 hp = {'batch_size': 256, 'buffer_size': 10000, 
       'gamma': 0.95, 'learning_starts': 10, 'log_std_init': -1.4627, 
       'lr': 0.000969826, 'net_arch': [256, 256], 
       'sde_sample_freq': 32, 'tau': 0.02, 'train_freq': 64, 
       'ent_coef': 'auto', 'target_entropy': 'auto', 'gradient_steps': 64, 'use_sde': True}
-
-
+```
+#### Model
+```
 model = SAC(
     MlpPolicy,
     env,
