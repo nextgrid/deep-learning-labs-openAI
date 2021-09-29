@@ -1,6 +1,10 @@
-[![Nextgrid Artificial Intelligence](https://storage.googleapis.com/nextgrid_github_repo_visuals/Github%20Graphics%20/big-banner.jpg)](https://nextgrid.ai)
+
+
+
+
 
 # OpenAI Leaderboard Takeover
+[![Nextgrid Artificial Intelligence](https://storage.googleapis.com/nextgrid_github_repo_visuals/Github%20Graphics%20/big-banner.jpg)](https://nextgrid.ai)
 
 Mission: Take top position in all [OpenAI leaderboards](https://github.com/openai/gym/wiki/Leaderboard). By [Deep Learning Labs](https://nextgrid.ai/deep-learning-labs/).
 
@@ -15,10 +19,12 @@ Mission: Take top position in all [OpenAI leaderboards](https://github.com/opena
 - [ ] BipedalWalkerHardcore-v2
 - [ ] CarRacing-v0
 
-[![Deep Learning Labs AI ](https://storage.googleapis.com/nextgrid_github_repo_visuals/Github%20Graphics%20/small-banner.jpg)](https://nextgrid.ai/dll)
+---
+![Discord Banner 1](https://discordapp.com/api/guilds/877056448956346408/widget.png?style=banner1)  
+Join our Discord and [Deep Learning Labs](https://dll.nextgrid.ai) Event
+
+[![Deep Learning Labs AI ](https://storage.googleapis.com/nextgrid_github_repo_visuals/Github%20Graphics%20/small-banner.jpg)](https://dll.nextgrid.ai)
 
 ## Nextgrid AI Seed program
-
-Applications for [Nextgrid](https://nextgrid.ai) AI seed program is now open. We are looking for briliant business & people that are building AI-first solutions. Read more and apply at [AI seed program](https://nextgrid.ai/seed/)
 
 [![Nextgrid Partners](https://storage.googleapis.com/nextgrid_github_repo_visuals/Github%20Graphics%20/partner-banner.jpg)](https://nextgrid.ai/partners/)
